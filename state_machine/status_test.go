@@ -57,13 +57,11 @@ func TestStateMachine_ChangeState(t *testing.T) {
 		},
 	}
 	x := &StateMachine{
-		stateMap: make(map[uint]State),
+		stateMap: make(map[uint]*StateNode),
 	}
-	x.Register(1, 3)
-	x.Register(2, 3)
-	x.Register(6, 3)
-	x.Register(1, 6)
-	x.Register(1, 7)
+	x.Register(NewStateNode(1, ""), NewStateNode(3, ""))
+	x.Register(NewStateNode(1, ""), NewStateNode(7, ""))
+	x.Register(NewStateNode(4, ""), NewStateNode(5, ""))
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
