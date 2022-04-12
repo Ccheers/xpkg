@@ -29,9 +29,6 @@ func NewStateMachine() *StateMachine {
 var ErrChangeState = errors.New("change state error")
 
 func (x *StateMachine) ChangeState(from, to uint) error {
-	if from == to {
-		return nil
-	}
 	if _, ok := x.stateMap[from]; !ok {
 		return fmt.Errorf("state %d not exist", from)
 	}
