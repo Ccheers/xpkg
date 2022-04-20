@@ -11,6 +11,10 @@ type StateNode struct {
 	next  map[uint]*StateNode
 }
 
+func (s *StateNode) String() string {
+	return s.desc
+}
+
 func NewStateNode(state uint, desc string) *StateNode {
 	return &StateNode{state: state, desc: desc, next: make(map[uint]*StateNode)}
 }
