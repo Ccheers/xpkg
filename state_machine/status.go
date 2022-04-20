@@ -17,7 +17,8 @@ func NewStateNode(state uint, desc string) *StateNode {
 
 // StateMachine 无限状态机
 type StateMachine struct {
-	stateMap map[uint]*StateNode
+	stateMap     map[uint]*StateNode
+	errorHandler func(from, to *StateNode) error
 }
 
 func NewStateMachine() *StateMachine {
@@ -29,19 +30,16 @@ func NewStateMachine() *StateMachine {
 var ErrChangeState = errors.New("change state error")
 
 func (x *StateMachine) ChangeState(from, to uint) error {
-	if _, ok := x.stateMap[from]; !ok {
-		return fmt.Errorf("state %d not exist", from)
-	}
 	_from := x.stateMap[from]
-	if _, ok := x.stateMap[to]; !ok {
-		return fmt.Errorf("state %d not exist", to)
-	}
 	_to := x.stateMap[to]
 	if _from == nil {
 		return fmt.Errorf("%w: state(%d) is not defined", ErrChangeState, from)
 	}
+	if _to == nil {
+		return fmt.Errorf("%w: state(%d) is not defined", ErrChangeState, from)
+	}
 	if _, ok := _from.next[to]; !ok {
-		return fmt.Errorf("%w: cant change state(%s) to state(%s)", ErrChangeState, _from.desc, _to.desc)
+		return x.errorHandler(_from, _to)
 	}
 	return nil
 }
