@@ -15,16 +15,34 @@ func NewStateNode(state uint, desc string) *StateNode {
 	return &StateNode{state: state, desc: desc, next: make(map[uint]*StateNode)}
 }
 
+type ErrorHandler func(from, to *StateNode) error
+
+type Option func(*StateMachine)
+
+func WithErrorHandler(handler ErrorHandler) Option {
+	return func(sm *StateMachine) {
+		sm.errorHandler = handler
+	}
+}
+
 // StateMachine 无限状态机
 type StateMachine struct {
 	stateMap     map[uint]*StateNode
-	errorHandler func(from, to *StateNode) error
+	errorHandler ErrorHandler
 }
 
-func NewStateMachine() *StateMachine {
-	return &StateMachine{
+func NewStateMachine(options ...Option) *StateMachine {
+	machine := &StateMachine{
 		stateMap: make(map[uint]*StateNode),
+		errorHandler: func(from, to *StateNode) error {
+			return fmt.Errorf("%w: %s -> %s", ErrChangeState, from.desc, to.desc)
+		},
 	}
+
+	for _, option := range options {
+		option(machine)
+	}
+	return machine
 }
 
 var ErrChangeState = errors.New("change state error")
