@@ -58,7 +58,7 @@ func (x *StateMachine) ChangeState(from, to uint) error {
 		return fmt.Errorf("%w: state(%d) is not defined", ErrChangeState, from)
 	}
 	if _to == nil {
-		return fmt.Errorf("%w: state(%d) is not defined", ErrChangeState, from)
+		return fmt.Errorf("%w: state(%d) is not defined", ErrChangeState, to)
 	}
 	if _, ok := _from.next[to]; !ok {
 		return x.errorHandler(_from, _to)
