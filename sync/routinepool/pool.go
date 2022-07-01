@@ -2,6 +2,7 @@ package routinepool
 
 import (
 	"context"
+	"log"
 	"sync"
 	"sync/atomic"
 )
@@ -83,6 +84,9 @@ func NewPool(name string, cap int32, config *Config) Pool {
 		cap:    cap,
 		config: config,
 	}
+	p.SetPanicHandler(func(ctx context.Context, err error) {
+		log.Println(err.Error())
+	})
 	return p
 }
 

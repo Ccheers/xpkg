@@ -44,7 +44,9 @@ func (w *worker) run() {
 			// check context before doing task
 			select {
 			case <-t.ctx.Done():
-				w.pool.panicHandler(t.ctx, fmt.Errorf("[routinepool] task cancel: %s error: %w", w.pool.name, t.ctx.Err()))
+				if w.pool.panicHandler != nil {
+					w.pool.panicHandler(t.ctx, fmt.Errorf("[routinepool] task cancel: %s error: %w", w.pool.name, t.ctx.Err()))
+				}
 				t.Recycle()
 				continue
 			default:
