@@ -12,9 +12,7 @@ import (
 	"github.com/ccheers/xpkg/stat/metric"
 )
 
-var (
-	ErrServiceUnavailable = fmt.Errorf("service unavailable")
-)
+var ErrServiceUnavailable = fmt.Errorf("service unavailable")
 
 // sreBreaker is a sre CircuitBreaker pattern.
 type sreBreaker struct {

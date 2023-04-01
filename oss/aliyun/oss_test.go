@@ -86,7 +86,7 @@ func TestOss_Get(t *testing.T) {
 
 func TestOss_Set(t *testing.T) {
 	return
-	
+
 	InitTestProvider()
 
 	type fields struct {

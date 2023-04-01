@@ -26,9 +26,7 @@ var (
 	}
 )
 
-var (
-	ErrLimitExceed = fmt.Errorf("limit exceed")
-)
+var ErrLimitExceed = fmt.Errorf("limit exceed")
 
 type cpuGetter func() int64
 

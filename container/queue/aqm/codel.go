@@ -8,9 +8,7 @@ import (
 	"time"
 )
 
-var (
-	ErrLimitExceed = fmt.Errorf("limit exceed")
-)
+var ErrLimitExceed = fmt.Errorf("limit exceed")
 
 // Config codel config.
 type Config struct {

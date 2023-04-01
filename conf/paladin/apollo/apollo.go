@@ -15,9 +15,7 @@ import (
 	"github.com/ccheers/xpkg/conf/paladin"
 )
 
-var (
-	_ paladin.Client = &apollo{}
-)
+var _ paladin.Client = &apollo{}
 
 type apolloWatcher struct {
 	keys []string // in apollo, they're called namespaces
