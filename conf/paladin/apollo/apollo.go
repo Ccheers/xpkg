@@ -59,19 +59,17 @@ type apollo struct {
 
 // Config is apollo config client config.
 type Config struct {
-	AppID      string   `json:"app_id"`
-	Cluster    string   `json:"cluster"`
-	CacheDir   string   `json:"cache_dir"`
-	MetaAddr   string   `json:"meta_addr"`
-	Namespaces []string `json:"namespaces"`
+	AppID           string   `json:"app_id"`
+	Cluster         string   `json:"cluster"`
+	CacheDir        string   `json:"cache_dir"`
+	MetaAddr        string   `json:"meta_addr"`
+	Namespaces      []string `json:"namespaces"`
 	AccesskeySecret string   `json:"accesskey_secret"`
 }
 
 type apolloDriver struct{}
 
-var (
-	confAppID, confCluster, confCacheDir, confMetaAddr, confNamespaces, accesskeySecret string
-)
+var confAppID, confCluster, confCacheDir, confMetaAddr, confNamespaces, accesskeySecret string
 
 func init() {
 	addApolloFlags()
@@ -124,11 +122,11 @@ func buildConfigForApollo() (c *Config, err error) {
 		accesskeySecret = accesskeySecretEnv
 	}
 	c = &Config{
-		AppID:      confAppID,
-		Cluster:    confCluster,
-		CacheDir:   confCacheDir,
-		MetaAddr:   confMetaAddr,
-		Namespaces: namespaceNames,
+		AppID:           confAppID,
+		Cluster:         confCluster,
+		CacheDir:        confCacheDir,
+		MetaAddr:        confMetaAddr,
+		Namespaces:      namespaceNames,
 		AccesskeySecret: accesskeySecret,
 	}
 	return
@@ -151,11 +149,11 @@ func (ad *apolloDriver) new(conf *Config) (paladin.Client, error) {
 		return nil, err
 	}
 	client := agollo.NewClient(&agollo.Conf{
-		AppID:          conf.AppID,
-		Cluster:        conf.Cluster,
-		NameSpaceNames: conf.Namespaces, // these namespaces will be subscribed at init
-		CacheDir:       conf.CacheDir,
-		MetaAddr:       conf.MetaAddr,
+		AppID:           conf.AppID,
+		Cluster:         conf.Cluster,
+		NameSpaceNames:  conf.Namespaces, // these namespaces will be subscribed at init
+		CacheDir:        conf.CacheDir,
+		MetaAddr:        conf.MetaAddr,
 		AccesskeySecret: conf.AccesskeySecret,
 	})
 	err := client.Start()
@@ -237,6 +235,7 @@ func (a *apollo) watchproc(keys []string) {
 		}
 	})
 }
+
 // Get return value by key.
 func (a *apollo) Get(key string) *paladin.Value {
 	return a.values.Get(key)

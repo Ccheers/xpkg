@@ -1,7 +1,9 @@
 package metric
 
-var _ Metric = &pointGauge{}
-var _ Aggregation = &pointGauge{}
+var (
+	_ Metric      = &pointGauge{}
+	_ Aggregation = &pointGauge{}
+)
 
 // PointGauge represents a ring window.
 // Every buckets within the window contains one point.

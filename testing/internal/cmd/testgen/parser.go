@@ -162,7 +162,7 @@ func parseType(expr ast.Expr) string {
 }
 
 func parseFuncType(temp string, data *ast.FieldList) string {
-	var params = parserParams(data.List)
+	params := parserParams(data.List)
 	for i, param := range params {
 		if i == 0 {
 			temp = param.K + " " + param.V

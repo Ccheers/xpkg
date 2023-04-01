@@ -6,6 +6,8 @@ VERSION=$(shell git describe --tags --always)
 # init env
 init:
 	go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
+	go install mvdan.cc/gofumpt@latest
+	go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 
 .PHONY: generate
 # generate
@@ -21,6 +23,9 @@ all:
 
 doc: .
 	gomarkdoc --output '{{.Dir}}/README.md' ./...
+
+go_fmt:
+	gofumpt -w .
 
 # show help
 help:

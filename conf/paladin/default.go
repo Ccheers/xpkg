@@ -24,9 +24,7 @@ func Init(args ...interface{}) (err error) {
 	if confPath != "" {
 		DefaultClient, err = NewFile(confPath)
 	} else {
-		var (
-			driver Driver
-		)
+		var driver Driver
 		argsLackErr := errors.New("lack of remote config center args")
 		if len(args) == 0 {
 			panic(argsLackErr.Error())

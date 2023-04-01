@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/ccheers/xpkg/testing/internal/cmd/testgen/mockgen"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/ccheers/xpkg/testing/internal/cmd/testgen/mockgen"
 
 	"github.com/golang/mock/mockgen/model"
 )
@@ -161,7 +162,7 @@ func (p *parse) genUTTest() (err error) {
 		file *os.File
 		flag = os.O_RDWR | os.O_CREATE | os.O_APPEND
 	)
-	if file, err = os.OpenFile(filename, flag, 0644); err != nil {
+	if file, err = os.OpenFile(filename, flag, 0o644); err != nil {
 		return
 	}
 	if _func == "" {
@@ -212,7 +213,7 @@ func (p *parse) genTestMain() (err error) {
 		buffer.WriteString(fmt.Sprintf(tpVar, vars))
 		buffer.WriteString(fmt.Sprintf(mainFunc, tomlPath, confFunc))
 		content, _ = GoImport(filename, buffer.Bytes())
-		ioutil.WriteFile(filename, content, 0644)
+		ioutil.WriteFile(filename, content, 0o644)
 	}
 	return
 }
@@ -264,7 +265,7 @@ func genInterface(parses []*parse) (err error) {
 		buffer.WriteString(fmt.Sprintf(tpPackage, pathSplit[len(pathSplit)-1]))
 		buffer.WriteString(fmt.Sprintf(tpInterface, strings.Title(pathSplit[len(pathSplit)-1]), v))
 		content, _ := GoImport(filename, buffer.Bytes())
-		err = ioutil.WriteFile(filename, content, 0644)
+		err = ioutil.WriteFile(filename, content, 0o644)
 	}
 	return
 }
@@ -278,20 +279,20 @@ func genMock(files ...string) (err error) {
 		if len(pkg.Interfaces) == 0 {
 			continue
 		}
-		var mockDir = pkg.PkgPath + "/mock"
+		mockDir := pkg.PkgPath + "/mock"
 		if _, err = os.Stat(mockDir); os.IsNotExist(err) {
 			err = nil
-			os.Mkdir(mockDir, 0744)
+			os.Mkdir(mockDir, 0o744)
 		}
-		var mockPath = mockDir + "/" + pkg.Name + "_mock.go"
+		mockPath := mockDir + "/" + pkg.Name + "_mock.go"
 		if _, exist := os.Stat(mockPath); os.IsExist(exist) {
 			continue
 		}
-		var g = mockgen.NewGenerator(mockgen.OptGeneratorFilename(file))
+		g := mockgen.NewGenerator(mockgen.OptGeneratorFilename(file))
 		if err = g.Generate(pkg, "mock", mockPath); err != nil {
 			return
 		}
-		if err = ioutil.WriteFile(mockPath, g.Output(), 0644); err != nil {
+		if err = ioutil.WriteFile(mockPath, g.Output(), 0o644); err != nil {
 			return
 		}
 	}
@@ -299,9 +300,7 @@ func genMock(files ...string) (err error) {
 }
 
 func genMonkey(parses []*parse) (err error) {
-	var (
-		pkg = make(map[string]string)
-	)
+	pkg := make(map[string]string)
 	for _, parse := range parses {
 		if strings.Contains(parse.Path, "monkey.go") ||
 			strings.Contains(parse.Path, "/mock/") {
@@ -330,9 +329,7 @@ func genMonkey(parses []*parse) (err error) {
 				!(parseFunc.Name[0] >= 'A' && parseFunc.Name[0] <= 'Z') {
 				continue
 			}
-			var (
-				funcParams, funcResults, mockKey, mockValue, funcName string
-			)
+			var funcParams, funcResults, mockKey, mockValue, funcName string
 			funcName = pack + parseFunc.Name
 			for k, param := range parseFunc.Params {
 				funcParams += "_ " + param.V
@@ -369,7 +366,7 @@ func genMonkey(parses []*parse) (err error) {
 		)
 		if _, err = os.Stat(mockDir); os.IsNotExist(err) {
 			err = nil
-			os.Mkdir(mockDir, 0744)
+			os.Mkdir(mockDir, 0o744)
 		}
 		if _, err := os.Stat(filename); os.IsExist(err) {
 			continue
@@ -377,7 +374,7 @@ func genMonkey(parses []*parse) (err error) {
 		buffer.WriteString(fmt.Sprintf(tpPackage, "mock"))
 		buffer.WriteString(content)
 		content, _ := GoImport(filename, buffer.Bytes())
-		ioutil.WriteFile(filename, content, 0644)
+		ioutil.WriteFile(filename, content, 0o644)
 	}
 	return
 }

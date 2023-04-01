@@ -14,13 +14,13 @@ import (
 func TestNewFile(t *testing.T) {
 	// test data
 	path := "/tmp/test_conf/"
-	assert.Nil(t, os.MkdirAll(path, 0700))
+	assert.Nil(t, os.MkdirAll(path, 0o700))
 	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`
 		text = "hello"	
 		number = 100
 		slice = [1, 2, 3]
 		sliceStr = ["1", "2", "3"]
-	`), 0644))
+	`), 0o644))
 	// test client
 	cli, err := NewFile(filepath.Join(path, "test.toml"))
 	assert.Nil(t, err)
@@ -41,15 +41,15 @@ func TestNewFile(t *testing.T) {
 func TestNewFilePath(t *testing.T) {
 	// test data
 	path := "/tmp/test_conf/"
-	assert.Nil(t, os.MkdirAll(path, 0700))
+	assert.Nil(t, os.MkdirAll(path, 0o700))
 	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`
 		text = "hello"	
 		number = 100
-	`), 0644))
+	`), 0o644))
 	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
 		text = "hello"	
 		number = 100
-	`), 0644))
+	`), 0o644))
 	// test client
 	cli, err := NewFile(path)
 	assert.Nil(t, err)
@@ -120,19 +120,19 @@ func TestFileEvent(t *testing.T) {
 
 func TestHiddenFile(t *testing.T) {
 	path := "/tmp/test_hidden_event/"
-	assert.Nil(t, os.MkdirAll(path, 0700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0644))
+	assert.Nil(t, os.MkdirAll(path, 0o700))
+	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
 	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
 		text = "hello"	
 		number = 100
-	`), 0644))
+	`), 0o644))
 	// test client
 	cli, err := NewFile(path)
 	assert.Nil(t, err)
 	assert.NotNil(t, cli)
 	cli.WatchEvent(context.Background(), "test.toml")
 	time.Sleep(time.Millisecond)
-	ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`hello`), 0644)
+	ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`hello`), 0o644)
 	time.Sleep(time.Second)
 	content1, _ := cli.Get("test.toml").String()
 	assert.Equal(t, "hello", content1)
@@ -143,8 +143,8 @@ func TestHiddenFile(t *testing.T) {
 func TestOneLevelSymbolicFile(t *testing.T) {
 	path := "/tmp/test_symbolic_link/"
 	path2 := "/tmp/test_symbolic_link/configs/"
-	assert.Nil(t, os.MkdirAll(path2, 0700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0644))
+	assert.Nil(t, os.MkdirAll(path2, 0o700))
+	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
 	assert.Nil(t, os.Symlink(filepath.Join(path, "test.toml"), filepath.Join(path2, "test.toml.ln")))
 	// test client
 	cli, err := NewFile(path2)

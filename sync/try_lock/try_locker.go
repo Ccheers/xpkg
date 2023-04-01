@@ -18,9 +18,7 @@ func NewChMutex() TryMutexLocker {
 	return &chMutex{ch: make(chan struct{}, 1)}
 }
 
-var (
-	errGetLockTimeOut = errors.New("get lock timeout")
-)
+var errGetLockTimeOut = errors.New("get lock timeout")
 
 func (c *chMutex) TryLock(duration time.Duration) error {
 	if duration > 0 {

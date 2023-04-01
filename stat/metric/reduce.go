@@ -2,7 +2,7 @@ package metric
 
 // Sum the values within the window.
 func Sum(iterator Iterator) float64 {
-	var result = 0.0
+	result := 0.0
 	for iterator.Next() {
 		bucket := iterator.Bucket()
 		for _, p := range bucket.Points {
@@ -14,8 +14,8 @@ func Sum(iterator Iterator) float64 {
 
 // Avg the values within the window.
 func Avg(iterator Iterator) float64 {
-	var result = 0.0
-	var count = 0.0
+	result := 0.0
+	count := 0.0
 	for iterator.Next() {
 		bucket := iterator.Bucket()
 		for _, p := range bucket.Points {
@@ -28,8 +28,8 @@ func Avg(iterator Iterator) float64 {
 
 // Min the values within the window.
 func Min(iterator Iterator) float64 {
-	var result = 0.0
-	var started = false
+	result := 0.0
+	started := false
 	for iterator.Next() {
 		bucket := iterator.Bucket()
 		for _, p := range bucket.Points {
@@ -48,8 +48,8 @@ func Min(iterator Iterator) float64 {
 
 // Max the values within the window.
 func Max(iterator Iterator) float64 {
-	var result = 0.0
-	var started = false
+	result := 0.0
+	started := false
 	for iterator.Next() {
 		bucket := iterator.Bucket()
 		for _, p := range bucket.Points {

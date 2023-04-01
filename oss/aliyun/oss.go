@@ -2,9 +2,10 @@ package aliyun
 
 import (
 	"context"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"io"
 	"io/ioutil"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 type Oss struct {

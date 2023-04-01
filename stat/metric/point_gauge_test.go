@@ -39,7 +39,7 @@ func TestPointGaugeReduce(t *testing.T) {
 	for i := 0; i < opts.Size; i++ {
 		pointGauge.Add(int64(i))
 	}
-	var _ = pointGauge.Reduce(func(i Iterator) float64 {
+	_ = pointGauge.Reduce(func(i Iterator) float64 {
 		idx := 0
 		for i.Next() {
 			bucket := i.Bucket()

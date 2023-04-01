@@ -12,8 +12,8 @@ import (
 )
 
 var testConf = &Config{
-	Target:   20,
-	Internal: 500,
+	Target:         20,
+	Internal:       500,
 	MaxOutstanding: 20,
 }
 

@@ -34,7 +34,7 @@ func TestListGetPut(t *testing.T) {
 }
 
 func TestListPut(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int
@@ -64,7 +64,7 @@ func TestListPut(t *testing.T) {
 }
 
 func TestListIdleTimeout(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int
@@ -147,7 +147,7 @@ func TestListPoolExhausted(t *testing.T) {
 }
 
 func TestListStaleClean(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int

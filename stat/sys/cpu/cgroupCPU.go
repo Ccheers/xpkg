@@ -236,7 +236,7 @@ func cpuMaxFreq() uint64 {
 	return feq
 }
 
-//GetClockTicks get the OS's ticks per second
+// GetClockTicks get the OS's ticks per second
 func getClockTicks() int {
 	// TODO figure out a better alternative for platforms where we're missing cgo
 	//

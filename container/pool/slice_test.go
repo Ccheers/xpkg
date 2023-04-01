@@ -11,8 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type closer struct {
-}
+type closer struct{}
 
 func (c *closer) Close() error {
 	return nil
@@ -62,7 +61,7 @@ func TestSliceGetPut(t *testing.T) {
 }
 
 func TestSlicePut(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int
@@ -92,7 +91,7 @@ func TestSlicePut(t *testing.T) {
 }
 
 func TestSliceIdleTimeout(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int
@@ -175,7 +174,7 @@ func TestSlicePoolExhausted(t *testing.T) {
 }
 
 func TestSliceStaleClean(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
 		io.Closer
 		id int

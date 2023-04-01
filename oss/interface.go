@@ -3,8 +3,9 @@ package oss
 import (
 	"context"
 	"errors"
-	"github.com/ccheers/xpkg/oss/huawei"
 	"io"
+
+	"github.com/ccheers/xpkg/oss/huawei"
 
 	"github.com/ccheers/xpkg/oss/aliyun"
 
@@ -12,7 +13,7 @@ import (
 	huaweiyunoss "github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 )
 
-//Oss 抽象接口
+// Oss 抽象接口
 type Oss interface {
 	Set(ctx context.Context, bucket string, key string, reader io.Reader) (err error)
 	Get(ctx context.Context, bucket string, key string) (resp []byte, err error)
@@ -22,24 +23,22 @@ type Oss interface {
 type Type string
 
 const (
-	//OssTypeHuaweiYun Oss 类型是华为云
+	// OssTypeHuaweiYun Oss 类型是华为云
 	OssTypeHuaweiYun Type = "huaweiyun"
-	//OssTypeAliYun Oss 类型是阿里云
+	// OssTypeAliYun Oss 类型是阿里云
 	OssTypeAliYun Type = "aliyun"
 )
 
-var (
-	errNoMatchType = errors.New("no match oss type")
-)
+var errNoMatchType = errors.New("no match oss type")
 
-//Config Oss 配置
+// Config Oss 配置
 type Config struct {
 	AccessKey       string
 	AccessKeySecret string
 	EndPoint        string
 }
 
-//Factory 工厂函数
+// Factory 工厂函数
 func Factory(tp Type, config Config) (Oss, error) {
 	switch tp {
 	case OssTypeHuaweiYun:
@@ -57,6 +56,7 @@ func getAliyunOss(config Config) (*aliyun.Oss, error) {
 	}
 	return aliyun.NewOss(client), nil
 }
+
 func getHuaweiyunOss(config Config) (*huawei.Oss, error) {
 	client, err := huaweiyunoss.New(config.AccessKey, config.AccessKeySecret, config.EndPoint)
 	if err != nil {
@@ -65,7 +65,7 @@ func getHuaweiyunOss(config Config) (*huawei.Oss, error) {
 	return huawei.NewOss(client), nil
 }
 
-//IsErrNoMatchType 错误断言 判断错误是否是： 未匹配 oss 错误
+// IsErrNoMatchType 错误断言 判断错误是否是： 未匹配 oss 错误
 func IsErrNoMatchType(err error) bool {
 	return errors.Is(err, errNoMatchType)
 }

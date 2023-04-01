@@ -1,6 +1,7 @@
 package breaker
 
 import (
+	"log"
 	"math"
 	"math/rand"
 	"sync"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/ccheers/xpkg/ecode"
 	"github.com/ccheers/xpkg/stat/metric"
-	"log"
 )
 
 // sreBreaker is a sre CircuitBreaker pattern.

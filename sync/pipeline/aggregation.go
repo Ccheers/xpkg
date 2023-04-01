@@ -14,8 +14,10 @@ import (
 // ErrFull channel full error
 var ErrFull = errors.New("channel full")
 
-const _metricNamespace = "sync"
-const _metricSubSystem = "pipeline"
+const (
+	_metricNamespace = "sync"
+	_metricSubSystem = "pipeline"
+)
 
 var (
 	_metricCount = metric.NewCounterVec(&metric.CounterVecOpts{

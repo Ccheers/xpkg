@@ -2,13 +2,13 @@ package bbr
 
 import (
 	"context"
+	"log"
 	"math"
 	"sync/atomic"
 	"time"
 
 	"github.com/ccheers/xpkg/container/group"
 	"github.com/ccheers/xpkg/ecode"
-	"log"
 	limit "github.com/ccheers/xpkg/ratelimit"
 	"github.com/ccheers/xpkg/stat/metric"
 
@@ -106,7 +106,7 @@ func (l *BBR) maxPASS() int64 {
 		}
 	}
 	rawMaxPass := int64(l.passStat.Reduce(func(iterator metric.Iterator) float64 {
-		var result = 1.0
+		result := 1.0
 		for i := 1; iterator.Next() && i < l.conf.WinBucket; i++ {
 			bucket := iterator.Bucket()
 			count := 0.0
@@ -144,7 +144,7 @@ func (l *BBR) minRT() int64 {
 		}
 	}
 	rawMinRT := int64(math.Ceil(l.rtStat.Reduce(func(iterator metric.Iterator) float64 {
-		var result = math.MaxFloat64
+		result := math.MaxFloat64
 		for i := 1; iterator.Next() && i < l.conf.WinBucket; i++ {
 			bucket := iterator.Bucket()
 			if len(bucket.Points) == 0 {

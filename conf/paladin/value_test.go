@@ -27,7 +27,7 @@ func TestValueUnmarshal(t *testing.T) {
 }
 
 func TestValue(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		in  interface{}
 		out interface{}
 	}{
@@ -109,7 +109,7 @@ func TestValue(t *testing.T) {
 }
 
 func TestValueSlice(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		in  interface{}
 		out interface{}
 	}{
@@ -170,6 +170,7 @@ func BenchmarkValueInt(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkValueFloat(b *testing.B) {
 	v := &Value{val: float64(100.1), raw: "100.1"}
 	b.RunParallel(func(pb *testing.PB) {
@@ -178,6 +179,7 @@ func BenchmarkValueFloat(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkValueBool(b *testing.B) {
 	v := &Value{val: true, raw: "true"}
 	b.RunParallel(func(pb *testing.PB) {
@@ -186,6 +188,7 @@ func BenchmarkValueBool(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkValueString(b *testing.B) {
 	v := &Value{val: "text", raw: "text"}
 	b.RunParallel(func(pb *testing.PB) {
