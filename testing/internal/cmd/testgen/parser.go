@@ -5,7 +5,6 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -43,8 +42,8 @@ func parseArgs(args []string, res *[]string, index int) (err error) {
 		if !strings.HasSuffix(args[index], "/") {
 			args[index] += "/"
 		}
-		var fs []os.FileInfo
-		if fs, err = ioutil.ReadDir(args[index]); err != nil {
+		var fs []os.DirEntry
+		if fs, err = os.ReadDir(args[index]); err != nil {
 			return
 		}
 		for _, f = range fs {
@@ -78,14 +77,14 @@ func parseFile(files ...string) (parses []*parse, err error) {
 			parse.Package = astFile.Name.Name
 		}
 		for _, decl := range astFile.Decls {
-			switch decl.(type) {
+			switch decl := decl.(type) {
 			case *ast.GenDecl:
-				if specs := decl.(*ast.GenDecl).Specs; len(specs) > 0 {
+				if specs := decl.Specs; len(specs) > 0 {
 					parse.Imports = parseImports(specs)
 				}
 			case *ast.FuncDecl:
 				var (
-					dec       = decl.(*ast.FuncDecl)
+					dec       = decl
 					parseFunc = &struct {
 						Name                   string
 						Method, Params, Result []*param
@@ -127,17 +126,17 @@ func parserParams(fields []*ast.Field) (params []*param) {
 }
 
 func parseType(expr ast.Expr) string {
-	switch expr.(type) {
+	switch expr := expr.(type) {
 	case *ast.Ident:
-		return expr.(*ast.Ident).Name
+		return expr.Name
 	case *ast.StarExpr:
-		return "*" + parseType(expr.(*ast.StarExpr).X)
+		return "*" + parseType(expr.X)
 	case *ast.ArrayType:
-		return "[" + parseType(expr.(*ast.ArrayType).Len) + "]" + parseType(expr.(*ast.ArrayType).Elt)
+		return "[" + parseType(expr.Len) + "]" + parseType(expr.Elt)
 	case *ast.SelectorExpr:
-		return parseType(expr.(*ast.SelectorExpr).X) + "." + expr.(*ast.SelectorExpr).Sel.Name
+		return parseType(expr.X) + "." + expr.Sel.Name
 	case *ast.MapType:
-		return "map[" + parseType(expr.(*ast.MapType).Key) + "]" + parseType(expr.(*ast.MapType).Value)
+		return "map[" + parseType(expr.Key) + "]" + parseType(expr.Value)
 	case *ast.StructType:
 		return "struct{}"
 	case *ast.InterfaceType:
@@ -147,16 +146,16 @@ func parseType(expr ast.Expr) string {
 			pTemp string
 			rTemp string
 		)
-		pTemp = parseFuncType(pTemp, expr.(*ast.FuncType).Params)
-		if expr.(*ast.FuncType).Results != nil {
-			rTemp = parseFuncType(rTemp, expr.(*ast.FuncType).Results)
+		pTemp = parseFuncType(pTemp, expr.Params)
+		if expr.Results != nil {
+			rTemp = parseFuncType(rTemp, expr.Results)
 			return fmt.Sprintf("func(%s) (%s)", pTemp, rTemp)
 		}
 		return fmt.Sprintf("func(%s)", pTemp)
 	case *ast.ChanType:
-		return fmt.Sprintf("make(chan %s)", parseType(expr.(*ast.ChanType).Value))
+		return fmt.Sprintf("make(chan %s)", parseType(expr.Value))
 	case *ast.Ellipsis:
-		return parseType(expr.(*ast.Ellipsis).Elt)
+		return parseType(expr.Elt)
 	}
 	return ""
 }
@@ -177,11 +176,11 @@ func parseFuncType(temp string, data *ast.FieldList) string {
 func parseImports(specs []ast.Spec) (params map[string]*param) {
 	params = make(map[string]*param)
 	for _, spec := range specs {
-		switch spec.(type) {
+		switch spec := spec.(type) {
 		case *ast.ImportSpec:
-			p := &param{V: strings.Replace(spec.(*ast.ImportSpec).Path.Value, "\"", "", -1)}
-			if spec.(*ast.ImportSpec).Name != nil {
-				p.K = spec.(*ast.ImportSpec).Name.Name
+			p := &param{V: strings.Replace(spec.Path.Value, "\"", "", -1)}
+			if spec.Name != nil {
+				p.K = spec.Name.Name
 				params[p.K] = p
 			} else {
 				vs := strings.Split(p.V, "/")

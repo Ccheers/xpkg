@@ -27,7 +27,7 @@ type pointGauge struct {
 
 // NewPointGauge creates a new PointGauge based on PointGaugeOpts.
 func NewPointGauge(opts PointGaugeOpts) PointGauge {
-	window := NewWindow(WindowOpts{Size: opts.Size})
+	window := NewWindow(WindowOpts(opts))
 	policy := NewPointPolicy(window)
 	return &pointGauge{
 		policy: policy,

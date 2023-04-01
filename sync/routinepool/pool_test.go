@@ -19,7 +19,7 @@ func DoCopyStack(a, b int) int {
 }
 
 func testFunc() {
-	DoCopyStack(0, 0)
+	_ = DoCopyStack(0, 0)
 }
 
 func testPanicFunc(ctx context.Context) {

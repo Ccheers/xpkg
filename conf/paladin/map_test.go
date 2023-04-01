@@ -5,19 +5,8 @@ import (
 
 	"github.com/ccheers/xpkg/conf/paladin"
 
-	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/assert"
 )
-
-type fruit struct {
-	Fruit []struct {
-		Name string
-	}
-}
-
-func (f *fruit) Set(text string) error {
-	return toml.Unmarshal([]byte(text), f)
-}
 
 func TestMap(t *testing.T) {
 	s := `

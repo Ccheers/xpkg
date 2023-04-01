@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -15,7 +14,7 @@ func TestNewFile(t *testing.T) {
 	// test data
 	path := "/tmp/test_conf/"
 	assert.Nil(t, os.MkdirAll(path, 0o700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "test.toml"), []byte(`
 		text = "hello"	
 		number = 100
 		slice = [1, 2, 3]
@@ -42,11 +41,11 @@ func TestNewFilePath(t *testing.T) {
 	// test data
 	path := "/tmp/test_conf/"
 	assert.Nil(t, os.MkdirAll(path, 0o700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "test.toml"), []byte(`
 		text = "hello"	
 		number = 100
 	`), 0o644))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
 		text = "hello"	
 		number = 100
 	`), 0o644))
@@ -121,8 +120,8 @@ func TestFileEvent(t *testing.T) {
 func TestHiddenFile(t *testing.T) {
 	path := "/tmp/test_hidden_event/"
 	assert.Nil(t, os.MkdirAll(path, 0o700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "abc.toml"), []byte(`
 		text = "hello"	
 		number = 100
 	`), 0o644))
@@ -132,7 +131,7 @@ func TestHiddenFile(t *testing.T) {
 	assert.NotNil(t, cli)
 	cli.WatchEvent(context.Background(), "test.toml")
 	time.Sleep(time.Millisecond)
-	ioutil.WriteFile(filepath.Join(path, "abc.toml"), []byte(`hello`), 0o644)
+	os.WriteFile(filepath.Join(path, "abc.toml"), []byte(`hello`), 0o644)
 	time.Sleep(time.Second)
 	content1, _ := cli.Get("test.toml").String()
 	assert.Equal(t, "hello", content1)
@@ -144,7 +143,7 @@ func TestOneLevelSymbolicFile(t *testing.T) {
 	path := "/tmp/test_symbolic_link/"
 	path2 := "/tmp/test_symbolic_link/configs/"
 	assert.Nil(t, os.MkdirAll(path2, 0o700))
-	assert.Nil(t, ioutil.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
+	assert.Nil(t, os.WriteFile(filepath.Join(path, "test.toml"), []byte(`hello`), 0o644))
 	assert.Nil(t, os.Symlink(filepath.Join(path, "test.toml"), filepath.Join(path2, "test.toml.ln")))
 	// test client
 	cli, err := NewFile(path2)

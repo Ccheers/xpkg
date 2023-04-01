@@ -2,11 +2,14 @@ package aqm
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sync"
 	"time"
+)
 
-	"github.com/ccheers/xpkg/ecode"
+var (
+	ErrLimitExceed = fmt.Errorf("limit exceed")
 )
 
 // Config codel config.
@@ -109,18 +112,18 @@ func (q *Queue) Push(ctx context.Context) (err error) {
 	select {
 	case q.packets <- r:
 	default:
-		err = ecode.LimitExceed
+		err = ErrLimitExceed
 		q.pool.Put(r.ch)
 	}
 	if err == nil {
 		select {
 		case drop := <-r.ch:
 			if drop {
-				err = ecode.LimitExceed
+				err = ErrLimitExceed
 			}
 			q.pool.Put(r.ch)
 		case <-ctx.Done():
-			err = ecode.Deadline
+			err = ctx.Err()
 		}
 	}
 	return

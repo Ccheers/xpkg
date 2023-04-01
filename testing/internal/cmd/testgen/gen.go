@@ -3,14 +3,14 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/ccheers/xpkg/testing/internal/cmd/testgen/mockgen"
-
 	"github.com/golang/mock/mockgen/model"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func genTest(parses []*parse) (err error) {
@@ -70,7 +70,7 @@ func (p *parse) genUTTest() (err error) {
 		if method := ConvertMethod(p.Path); method != "" {
 			methodK = method + "."
 		}
-		tpTestFuncs := fmt.Sprintf(tpTestFunc, strings.Title(p.Package), parseFunc.Name, "", parseFunc.Name, "%s", "%s", "%s")
+		tpTestFuncs := fmt.Sprintf(tpTestFunc, cases.Title(language.Make(p.Package)), parseFunc.Name, "", parseFunc.Name, "%s", "%s", "%s")
 		tpTestFuncBeCall := methodK + parseFunc.Name + "(%s)\n\t\t\tConvey(\"%s\", func() {"
 		if parseFunc.Result == nil {
 			tpTestFuncBeCall = fmt.Sprintf(tpTestFuncBeCall, "%s", "No return values")
@@ -204,7 +204,7 @@ func (p *parse) genTestMain() (err error) {
 		impts = strings.Join([]string{`"os"`, `"flag"`, `"testing"`, p.Imports["paladin"].V}, "\n\t")
 		confFunc = fmt.Sprintf(tpTestMainNew, instance+" = New()")
 	} else {
-		impts = strings.Join(append([]string{`"os"`, `"flag"`, `"testing"`}), "\n\t")
+		impts = strings.Join([]string{`"os"`, `"flag"`, `"testing"`}, "\n\t")
 		confFunc = fmt.Sprintf(tpTestMainOld, instance+" = New(conf.Conf)")
 	}
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
@@ -213,7 +213,7 @@ func (p *parse) genTestMain() (err error) {
 		buffer.WriteString(fmt.Sprintf(tpVar, vars))
 		buffer.WriteString(fmt.Sprintf(mainFunc, tomlPath, confFunc))
 		content, _ = GoImport(filename, buffer.Bytes())
-		ioutil.WriteFile(filename, content, 0o644)
+		os.WriteFile(filename, content, 0o644)
 	}
 	return
 }
@@ -263,9 +263,9 @@ func genInterface(parses []*parse) (err error) {
 			continue
 		}
 		buffer.WriteString(fmt.Sprintf(tpPackage, pathSplit[len(pathSplit)-1]))
-		buffer.WriteString(fmt.Sprintf(tpInterface, strings.Title(pathSplit[len(pathSplit)-1]), v))
+		buffer.WriteString(fmt.Sprintf(tpInterface, cases.Title(language.Make(pathSplit[len(pathSplit)-1])), v))
 		content, _ := GoImport(filename, buffer.Bytes())
-		err = ioutil.WriteFile(filename, content, 0o644)
+		err = os.WriteFile(filename, content, 0o644)
 	}
 	return
 }
@@ -292,7 +292,7 @@ func genMock(files ...string) (err error) {
 		if err = g.Generate(pkg, "mock", mockPath); err != nil {
 			return
 		}
-		if err = ioutil.WriteFile(mockPath, g.Output(), 0o644); err != nil {
+		if err = os.WriteFile(mockPath, g.Output(), 0o644); err != nil {
 			return
 		}
 	}
@@ -374,7 +374,7 @@ func genMonkey(parses []*parse) (err error) {
 		buffer.WriteString(fmt.Sprintf(tpPackage, "mock"))
 		buffer.WriteString(content)
 		content, _ := GoImport(filename, buffer.Bytes())
-		ioutil.WriteFile(filename, content, 0o644)
+		os.WriteFile(filename, content, 0o644)
 	}
 	return
 }

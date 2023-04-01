@@ -16,8 +16,7 @@ import (
 )
 
 var (
-	_            paladin.Client = &apollo{}
-	defaultValue                = ""
+	_ paladin.Client = &apollo{}
 )
 
 type apolloWatcher struct {

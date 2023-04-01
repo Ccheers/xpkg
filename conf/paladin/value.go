@@ -20,9 +20,8 @@ var (
 
 // Value is config value, maybe a json/toml/ini/string file.
 type Value struct {
-	val   interface{}
-	slice interface{}
-	raw   string
+	val interface{}
+	raw string
 }
 
 // NewValue new a value

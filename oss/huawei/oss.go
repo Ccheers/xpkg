@@ -4,7 +4,6 @@ package huawei
 import (
 	"context"
 	"io"
-	"io/ioutil"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 )
@@ -37,6 +36,6 @@ func (h *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, 
 	defer output.Body.Close()
 
 	// 读取对象内容
-	resp, err = ioutil.ReadAll(output.Body)
+	resp, err = io.ReadAll(output.Body)
 	return
 }

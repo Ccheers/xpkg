@@ -2,7 +2,6 @@ package cpu
 
 import (
 	"bufio"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -11,7 +10,7 @@ import (
 )
 
 func readFile(path string) (string, error) {
-	contents, err := ioutil.ReadFile(path)
+	contents, err := os.ReadFile(path)
 	if err != nil {
 		return "", errors.Wrapf(err, "os/stat: read file(%s) failed!", path)
 	}
