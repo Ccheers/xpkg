@@ -42,12 +42,12 @@ func parseArgs(args []string, res *[]string, index int) (err error) {
 		if !strings.HasSuffix(args[index], "/") {
 			args[index] += "/"
 		}
-		var fs []os.DirEntry
-		if fs, err = os.ReadDir(args[index]); err != nil {
+		var entries []os.DirEntry
+		if entries, err = os.ReadDir(args[index]); err != nil {
 			return
 		}
-		for _, f = range fs {
-			path, _ := filepath.Abs(args[index] + f.Name())
+		for _, entry := range entries {
+			path, _ := filepath.Abs(args[index] + entry.Name())
 			args = append(args, path)
 		}
 	} else {
