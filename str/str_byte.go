@@ -10,11 +10,11 @@ func BytesToString(bts []byte) string {
 }
 
 func StringToByte(s string) []byte {
-	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	bts := &reflect.SliceHeader{
-		Data: sh.Data,
-		Len:  sh.Len,
-		Cap:  sh.Len,
-	}
-	return *(*[]byte)(unsafe.Pointer(bts))
+	var b []byte
+	l := len(s)
+	p := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	p.Data = (*reflect.StringHeader)(unsafe.Pointer(&s)).Data
+	p.Len = l
+	p.Cap = l
+	return b
 }

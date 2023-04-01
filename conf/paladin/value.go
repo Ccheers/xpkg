@@ -166,8 +166,8 @@ func (v *Value) UnmarshalTOML(dst interface{}) error {
 	return toml.Unmarshal([]byte(text), dst)
 }
 
-// UnmarshalJSON unmarhsal json to struct.
-func (v *Value) UnmarshalJSON(dst interface{}) error {
+// UnmarshalFromJSON unmarhsal json to struct.
+func (v *Value) UnmarshalFromJSON(dst interface{}) error {
 	text, err := v.Raw()
 	if err != nil {
 		return err
