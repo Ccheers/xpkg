@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"runtime"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 type distributedTryLocker struct {
@@ -74,4 +76,15 @@ func (r *distributedTryLocker) TryLock(duration time.Duration) error {
 		}
 	}
 	return fmt.Errorf("%w: key=%s value=%s", errGetLockTimeOut, r.key, r.value)
+}
+
+func SimpleDistributedTryLock(command CASCommand, key string, duration time.Duration, opts ...Option) (func(), error) {
+	locker := NewDistributedTryLocker(command, key, uuid.NewV1().String(), opts...)
+	err := locker.TryLock(duration)
+	if err != nil {
+		return nil, err
+	}
+	return func() {
+		locker.Unlock()
+	}, nil
 }

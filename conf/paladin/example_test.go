@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ccheers/xpkg/conf/paladin"
-	"github.com/ccheers/xpkg/conf/paladin/apollo"
-
 	"github.com/BurntSushi/toml"
+	"github.com/ccheers/xpkg/conf/paladin"
 )
 
 type exampleConf struct {
@@ -46,40 +44,6 @@ func ExampleClient() {
 		panic(err)
 	}
 	if err := paladin.Get("example.toml").UnmarshalTOML(&ec); err != nil {
-		panic(err)
-	}
-	// use exampleConf
-	// watch event key
-	go func() {
-		for event := range paladin.WatchEvent(context.TODO(), "key") {
-			fmt.Println(event)
-		}
-	}()
-}
-
-// ExampleApolloClient is an example client for apollo driver usage.
-func ExampleApolloClient() {
-	/*
-		pass flags or set envs that apollo needs, for example:
-
-		```
-		export APOLLO_APP_ID=SampleApp
-		export APOLLO_CLUSTER=default
-		export APOLLO_CACHE_DIR=/tmp
-		export APOLLO_META_ADDR=localhost:8080
-		export APOLLO_NAMESPACES=example.yml
-		```
-	*/
-
-	if err := paladin.Init(apollo.PaladinDriverApollo); err != nil {
-		panic(err)
-	}
-	var ec exampleConf
-	// var setter
-	if err := paladin.Watch("example.yml", &ec); err != nil {
-		panic(err)
-	}
-	if err := paladin.Get("example.yml").UnmarshalYAML(&ec); err != nil {
 		panic(err)
 	}
 	// use exampleConf
