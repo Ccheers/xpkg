@@ -56,7 +56,7 @@ func TestPool_CtxGo(t *testing.T) {
 			atomic.AddInt32(&n, 1)
 		})
 	}
-	closeChan := make(chan struct{}, 0)
+	closeChan := make(chan struct{})
 	go func() {
 		wg.Wait()
 		closeChan <- struct{}{}
