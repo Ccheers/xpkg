@@ -3,11 +3,11 @@ package lich
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net"
 	"strconv"
 	"strings"
 
-	"log"
 	// Register go-sql-driver stuff
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -72,7 +72,7 @@ func checkMysql(c *Container) (err error) {
 	if ports, ok := c.NetworkSettings.Ports["3306/tcp"]; ok {
 		ip, port = ports[0].HostIP, ports[0].HostPort
 	}
-	var dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/", user, passwd, ip, port)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", user, passwd, ip, port)
 	if db, err = sql.Open("mysql", dsn); err != nil {
 		log.Printf("sql.Open(mysql) dsn(%s) error(%v)", dsn, err)
 		return

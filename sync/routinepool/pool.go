@@ -9,9 +9,7 @@ import (
 	"time"
 )
 
-var (
-	errPoolIsStopped = errors.New("routine pool is stopped")
-)
+var errPoolIsStopped = errors.New("routine pool is stopped")
 
 const (
 	poolStatusRunning = 1 // 线程池 活跃中

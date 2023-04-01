@@ -1,7 +1,6 @@
 package str
 
 import (
-	"reflect"
 	"unsafe"
 )
 
@@ -10,11 +9,10 @@ func BytesToString(bts []byte) string {
 }
 
 func StringToByte(s string) []byte {
-	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	bts := &reflect.SliceHeader{
-		Data: sh.Data,
-		Len:  sh.Len,
-		Cap:  sh.Len,
-	}
-	return *(*[]byte)(unsafe.Pointer(bts))
+	return *(*[]byte)(unsafe.Pointer(
+		&struct {
+			string
+			Cap int
+		}{s, len(s)},
+	))
 }

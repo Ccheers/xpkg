@@ -6,8 +6,7 @@ import (
 )
 
 // Opts contains the common arguments for creating Metric.
-type Opts struct {
-}
+type Opts struct{}
 
 // Metric is a sample interface.
 // Implementations of Metrics in metric package are Counter, Gauge,
@@ -50,9 +49,7 @@ const (
 	_businessSubSystemHistogram = "histogram"
 )
 
-var (
-	_defaultBuckets = []float64{5, 10, 25, 50, 100, 250, 500}
-)
+var _defaultBuckets = []float64{5, 10, 25, 50, 100, 250, 500}
 
 // NewBusinessMetricCount business Metric count vec.
 // name or labels should not be empty.

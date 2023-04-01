@@ -6,13 +6,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"time"
-
-	"log"
 )
 
 var (
@@ -76,7 +75,7 @@ func getServices() (output []byte, err error) {
 	if output, err = runCompose("config", "--services"); err != nil {
 		return
 	}
-	var eol = []byte("\n")
+	eol := []byte("\n")
 	if output = bytes.TrimSpace(output); runtime.GOOS == "windows" {
 		eol = []byte("\r\n")
 	}
@@ -98,7 +97,7 @@ func getServices() (output []byte, err error) {
 			log.Printf("exec.Command(docker) args(%v) error(%v)", args, err)
 			return
 		}
-		var c = &Container{}
+		c := &Container{}
 		if err = json.Unmarshal(bytes.Trim(output, "'"), c); err != nil {
 			log.Printf("json.Unmarshal(%s) error(%v)", string(output), err)
 			return

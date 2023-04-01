@@ -2,8 +2,10 @@ package metric
 
 import "time"
 
-var _ Metric = &rollingGauge{}
-var _ Aggregation = &rollingGauge{}
+var (
+	_ Metric      = &rollingGauge{}
+	_ Aggregation = &rollingGauge{}
+)
 
 // RollingGauge represents a ring window based on time duration.
 // e.g. [[1, 2], [1, 2, 3], [1,2, 3, 4]]

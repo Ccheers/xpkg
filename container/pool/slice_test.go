@@ -11,7 +11,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type closer struct {
+type closer struct{}
+
+func (c *closer) Read(p []byte) (n int, err error) {
+	return 0, nil
+}
+
+func (c *closer) Write(p []byte) (n int, err error) {
+	return 0, nil
 }
 
 func (c *closer) Close() error {
@@ -19,7 +26,7 @@ func (c *closer) Close() error {
 }
 
 type connection struct {
-	c    io.Closer
+	c    io.ReadWriteCloser
 	pool Pool
 }
 
@@ -49,7 +56,7 @@ func TestSliceGetPut(t *testing.T) {
 		Wait:        false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -62,9 +69,9 @@ func TestSliceGetPut(t *testing.T) {
 }
 
 func TestSlicePut(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -75,9 +82,9 @@ func TestSlicePut(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	// test Put(ctx, conn, true)
 	conn, err := pool.Get(context.TODO())
@@ -92,9 +99,9 @@ func TestSlicePut(t *testing.T) {
 }
 
 func TestSliceIdleTimeout(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -104,9 +111,9 @@ func TestSliceIdleTimeout(t *testing.T) {
 		IdleTimeout: xtime.Duration(1 * time.Millisecond),
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	// test Put(ctx, conn, true)
 	conn, err := pool.Get(context.TODO())
@@ -132,7 +139,7 @@ func TestSliceContextTimeout(t *testing.T) {
 		Wait:        false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 	// test context timeout
@@ -158,7 +165,7 @@ func TestSlicePoolExhausted(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -175,9 +182,9 @@ func TestSlicePoolExhausted(t *testing.T) {
 }
 
 func TestSliceStaleClean(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -188,9 +195,9 @@ func TestSliceStaleClean(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	conn, err := pool.Get(context.TODO())
 	assert.Nil(t, err)
@@ -218,7 +225,7 @@ func BenchmarkSlice1(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -246,7 +253,7 @@ func BenchmarkSlice2(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -274,7 +281,7 @@ func BenchmarkSlice3(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -302,7 +309,7 @@ func BenchmarkSlice4(b *testing.B) {
 		Wait: false,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -330,7 +337,7 @@ func BenchmarkSlice5(b *testing.B) {
 		Wait: true,
 	}
 	pool := NewSlice(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 

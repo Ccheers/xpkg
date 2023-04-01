@@ -11,9 +11,9 @@ import (
 
 // Config codel config.
 type Config struct {
-	Target   int64 // target queue delay (default 20 ms).
-	Internal int64 // sliding minimum time window width (default 500 ms)
-	MaxOutstanding int64 //max num of concurrent acquires
+	Target         int64 // target queue delay (default 20 ms).
+	Internal       int64 // sliding minimum time window width (default 500 ms)
+	MaxOutstanding int64 // max num of concurrent acquires
 }
 
 // Stat is the Statistics of codel.
@@ -30,8 +30,8 @@ type packet struct {
 }
 
 var defaultConf = &Config{
-	Target:   50,
-	Internal: 500,
+	Target:         50,
+	Internal:       500,
 	MaxOutstanding: 40,
 }
 
@@ -40,13 +40,13 @@ type Queue struct {
 	pool    sync.Pool
 	packets chan packet
 
-	mux      sync.RWMutex
-	conf     *Config
-	count    int64
-	dropping bool  // 	Equal to 1 if in drop state
-	faTime   int64 // Time when we'll declare we're above target (0 if below)
-	dropNext int64 // Packets dropped since going into drop state
-	outstanding    int64
+	mux         sync.RWMutex
+	conf        *Config
+	count       int64
+	dropping    bool  // 	Equal to 1 if in drop state
+	faTime      int64 // Time when we'll declare we're above target (0 if below)
+	dropNext    int64 // Packets dropped since going into drop state
+	outstanding int64
 }
 
 // Default new a default codel queue.
@@ -97,7 +97,7 @@ func (q *Queue) Stat() Stat {
 func (q *Queue) Push(ctx context.Context) (err error) {
 	q.mux.Lock()
 	if q.outstanding < q.conf.MaxOutstanding && len(q.packets) == 0 {
-		q.outstanding ++
+		q.outstanding++
 		q.mux.Unlock()
 		return
 	}
@@ -129,7 +129,7 @@ func (q *Queue) Push(ctx context.Context) (err error) {
 // Pop req from CoDel request buffer queue.
 func (q *Queue) Pop() {
 	q.mux.Lock()
-	q.outstanding --
+	q.outstanding--
 	if q.outstanding < 0 {
 		q.outstanding = 0
 		q.mux.Unlock()
@@ -195,7 +195,7 @@ func (q *Queue) judge(p packet) (drop bool) {
 		q.dropNext = q.controlLaw(now)
 		return
 	}
-	q.outstanding ++
+	q.outstanding++
 	drop = false
 	return
 }

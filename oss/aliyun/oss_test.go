@@ -2,33 +2,34 @@ package aliyun
 
 import (
 	"context"
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"io"
 	"reflect"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
 var testClient *oss.Client
 
 var once = sync.Once{}
 
-const testBucket = "platform-res-test"
-const testKey = "haijun"
+const (
+	testBucket = "platform-res-test"
+	testKey    = "haijun"
+)
 
 func InitTestProvider() {
 	once.Do(func() {
-
-		var ak = "LTAI4GFkoGvkZJZvrPezY74E"
-		var sk = "3WYELnjNIiYEf9mEyvAYS18LFzM2y1"
-		var endpoint = "http://oss-cn-hangzhou.aliyuncs.com"
+		ak := "LTAI4GFkoGvkZJZvrPezY74E"
+		sk := "3WYELnjNIiYEf9mEyvAYS18LFzM2y1"
+		endpoint := "http://oss-cn-hangzhou.aliyuncs.com"
 		var err error
 		testClient, err = oss.New(endpoint, ak, sk)
 		if err != nil {
 			panic(err)
 		}
-
 	})
 }
 

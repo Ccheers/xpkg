@@ -93,7 +93,7 @@ func TestRollingGaugeReduce(t *testing.T) {
 			time.Sleep(bucketDuration)
 		}
 	}
-	var result = r.Reduce(func(i Iterator) float64 {
+	result := r.Reduce(func(i Iterator) float64 {
 		var result float64
 		for i.Next() {
 			bucket := i.Bucket()
@@ -116,7 +116,7 @@ func TestRollingGaugeDataRace(t *testing.T) {
 		BucketDuration: bucketDuration,
 	}
 	r := NewRollingGauge(opts)
-	var stop = make(chan bool)
+	stop := make(chan bool)
 	go func() {
 		for {
 			select {
@@ -178,7 +178,7 @@ func BenchmarkRollingGaugeReduce(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i <= b.N; i++ {
-		var _ = r.Reduce(func(i Iterator) float64 {
+		_ = r.Reduce(func(i Iterator) float64 {
 			var result float64
 			for i.Next() {
 				bucket := i.Bucket()

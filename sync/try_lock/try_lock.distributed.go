@@ -49,7 +49,6 @@ func NewDistributedTryLocker(cmd CASCommand, key, value string, opts ...Option) 
 		opt(option)
 	}
 	return &distributedTryLocker{cmd: cmd, key: key, value: value, option: option}
-
 }
 
 func (r *distributedTryLocker) Unlock() {

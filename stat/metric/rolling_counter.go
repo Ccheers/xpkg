@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
-var _ Metric = &rollingCounter{}
-var _ Aggregation = &rollingCounter{}
+var (
+	_ Metric      = &rollingCounter{}
+	_ Aggregation = &rollingCounter{}
+)
 
 // RollingCounter represents a ring window based on time duration.
 // e.g. [[1], [3], [5]]

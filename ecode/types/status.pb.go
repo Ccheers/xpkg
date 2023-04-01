@@ -81,7 +81,9 @@ func init() {
 	proto.RegisterType((*Status)(nil), "bilibili.rpc.Status")
 }
 
-func init() { proto.RegisterFile("internal/types/status.proto", fileDescriptor_status_88668d6b2bf80f08) }
+func init() {
+	proto.RegisterFile("internal/types/status.proto", fileDescriptor_status_88668d6b2bf80f08)
+}
 
 var fileDescriptor_status_88668d6b2bf80f08 = []byte{
 	// 220 bytes of a gzipped FileDescriptorProto

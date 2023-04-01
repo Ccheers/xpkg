@@ -15,6 +15,7 @@ const (
 	// Drop opertion type: drop
 	Drop
 )
+
 // Allow  allow options.
 type Allow struct{}
 

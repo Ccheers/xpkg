@@ -17,7 +17,7 @@ type List struct {
 	//
 	// The item returned from new must not be in a special state
 	// (subscribed to pubsub channel, transaction started, ...).
-	New func(ctx context.Context) (io.Closer, error)
+	New func(ctx context.Context) (io.ReadWriteCloser, error)
 
 	// mu protects fields defined below.
 	mu     sync.Mutex
@@ -110,7 +110,7 @@ func (p *List) staleCleaner() {
 
 // Get returns a item from the idles List or
 // get a new item.
-func (p *List) Get(ctx context.Context) (io.Closer, error) {
+func (p *List) Get(ctx context.Context) (io.ReadWriteCloser, error) {
 	p.mu.Lock()
 	if p.closed {
 		p.mu.Unlock()
@@ -177,7 +177,7 @@ func (p *List) Get(ctx context.Context) (io.Closer, error) {
 }
 
 // Put put item into pool.
-func (p *List) Put(ctx context.Context, c io.Closer, forceClose bool) error {
+func (p *List) Put(ctx context.Context, c io.ReadWriteCloser, forceClose bool) error {
 	p.mu.Lock()
 	if !p.closed && !forceClose {
 		p.idles.PushFront(item{createdAt: nowFunc(), c: c})

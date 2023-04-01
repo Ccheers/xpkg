@@ -3,16 +3,13 @@ package fanout
 import (
 	"context"
 	"errors"
+	"log"
 	"runtime"
 	"sync"
-
-	"log"
 )
 
-var (
-	// ErrFull chan full.
-	ErrFull = errors.New("fanout: chan full")
-)
+// ErrFull chan full.
+var ErrFull = errors.New("fanout: chan full")
 
 type options struct {
 	worker int

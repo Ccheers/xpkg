@@ -3,9 +3,10 @@ package huawei
 // 引入依赖包
 import (
 	"context"
-	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 	"io"
 	"io/ioutil"
+
+	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 )
 
 type Oss struct {

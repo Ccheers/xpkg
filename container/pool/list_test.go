@@ -21,7 +21,7 @@ func TestListGetPut(t *testing.T) {
 		Wait:        false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -34,9 +34,9 @@ func TestListGetPut(t *testing.T) {
 }
 
 func TestListPut(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -47,9 +47,9 @@ func TestListPut(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	// test Put(ctx, conn, true)
 	conn, err := pool.Get(context.TODO())
@@ -64,9 +64,9 @@ func TestListPut(t *testing.T) {
 }
 
 func TestListIdleTimeout(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -76,9 +76,9 @@ func TestListIdleTimeout(t *testing.T) {
 		IdleTimeout: xtime.Duration(1 * time.Millisecond),
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	// test Put(ctx, conn, true)
 	conn, err := pool.Get(context.TODO())
@@ -104,7 +104,7 @@ func TestListContextTimeout(t *testing.T) {
 		Wait:        false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 	// test context timeout
@@ -130,7 +130,7 @@ func TestListPoolExhausted(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -147,9 +147,9 @@ func TestListPoolExhausted(t *testing.T) {
 }
 
 func TestListStaleClean(t *testing.T) {
-	var id = 0
+	id := 0
 	type connID struct {
-		io.Closer
+		io.ReadWriteCloser
 		id int
 	}
 	config := &Config{
@@ -160,9 +160,9 @@ func TestListStaleClean(t *testing.T) {
 		Wait: false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		id = id + 1
-		return &connID{id: id, Closer: &closer{}}, nil
+		return &connID{id: id, ReadWriteCloser: &closer{}}, nil
 	}
 	conn, err := pool.Get(context.TODO())
 	assert.Nil(t, err)
@@ -190,7 +190,7 @@ func BenchmarkList1(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -218,7 +218,7 @@ func BenchmarkList2(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -246,7 +246,7 @@ func BenchmarkPool3(b *testing.B) {
 		Wait:        false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -274,7 +274,7 @@ func BenchmarkList4(b *testing.B) {
 		Wait: false,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 
@@ -302,7 +302,7 @@ func BenchmarkList5(b *testing.B) {
 		Wait: true,
 	}
 	pool := NewList(config)
-	pool.New = func(ctx context.Context) (io.Closer, error) {
+	pool.New = func(ctx context.Context) (io.ReadWriteCloser, error) {
 		return &closer{}, nil
 	}
 

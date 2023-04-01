@@ -2,33 +2,34 @@ package huawei
 
 import (
 	"context"
-	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 	"io"
 	"reflect"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/huaweicloud/huaweicloud-sdk-go-obs/obs"
 )
 
 var testClient *obs.ObsClient
 
 var once = sync.Once{}
 
-const testBucket = "hj.test"
-const testKey = "haijun"
+const (
+	testBucket = "hj.test"
+	testKey    = "haijun"
+)
 
 func InitTestProvider() {
 	once.Do(func() {
-
-		var ak = "31THLB9DIBM3JF6JLTQA"
-		var sk = "BdN6yxwjnmFDN4i5rucYVoXZSQq7IAZf5aLJsrnE"
-		var endpoint = "https://obs.cn-east-3.myhuaweicloud.com"
+		ak := "31THLB9DIBM3JF6JLTQA"
+		sk := "BdN6yxwjnmFDN4i5rucYVoXZSQq7IAZf5aLJsrnE"
+		endpoint := "https://obs.cn-east-3.myhuaweicloud.com"
 		var err error
 		testClient, err = obs.New(ak, sk, endpoint)
 		if err != nil {
 			panic(err)
 		}
-
 	})
 }
 

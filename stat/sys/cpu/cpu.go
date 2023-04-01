@@ -22,9 +22,7 @@ type CPU interface {
 }
 
 func init() {
-	var (
-		err error
-	)
+	var err error
 	stats, err = newCgroupCPU()
 	if err != nil {
 		// fmt.Printf("cgroup cpu init failed(%v),switch to psutil cpu\n", err)

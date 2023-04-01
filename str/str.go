@@ -7,13 +7,11 @@ import (
 	"sync"
 )
 
-var (
-	bfPool = sync.Pool{
-		New: func() interface{} {
-			return bytes.NewBuffer([]byte{})
-		},
-	}
-)
+var bfPool = sync.Pool{
+	New: func() interface{} {
+		return bytes.NewBuffer([]byte{})
+	},
+}
 
 // JoinInts format int64 slice like:n1,n2,n3.
 func JoinInts(is []int64) string {

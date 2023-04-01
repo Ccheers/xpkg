@@ -62,7 +62,7 @@ func (s *mockServer) ConfigHandler(rw http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
 
 	strs := strings.Split(req.RequestURI, "/")
-	var namespace, releaseKey = strings.Split(strs[4], "?")[0], req.FormValue("releaseKey")
+	namespace, releaseKey := strings.Split(strs[4], "?")[0], req.FormValue("releaseKey")
 	config := s.Get(namespace)
 
 	ret := result{NamespaceName: namespace, Configurations: config, ReleaseKey: releaseKey}

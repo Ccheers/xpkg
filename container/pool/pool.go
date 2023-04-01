@@ -40,7 +40,7 @@ type Config struct {
 
 type item struct {
 	createdAt time.Time
-	c         io.Closer
+	c         io.ReadWriteCloser
 }
 
 func (i *item) expired(timeout time.Duration) bool {
@@ -56,7 +56,7 @@ func (i *item) close() error {
 
 // Pool interface.
 type Pool interface {
-	Get(ctx context.Context) (io.Closer, error)
-	Put(ctx context.Context, c io.Closer, forceClose bool) error
+	Get(ctx context.Context) (io.ReadWriteCloser, error)
+	Put(ctx context.Context, c io.ReadWriteCloser, forceClose bool) error
 	Close() error
 }

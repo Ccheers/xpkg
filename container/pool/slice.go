@@ -16,7 +16,7 @@ type Slice struct {
 	//
 	// The item returned from new must not be in a special state
 	// (subscribed to pubsub channel, transaction started, ...).
-	New  func(ctx context.Context) (io.Closer, error)
+	New  func(ctx context.Context) (io.ReadWriteCloser, error)
 	stop func() // stop cancels the item opener.
 
 	// mu protects fields defined below.
@@ -69,7 +69,7 @@ func (p *Slice) Reload(c *Config) error {
 }
 
 // Get returns a newly-opened or cached *item.
-func (p *Slice) Get(ctx context.Context) (io.Closer, error) {
+func (p *Slice) Get(ctx context.Context) (io.ReadWriteCloser, error) {
 	p.mu.Lock()
 	if p.closed {
 		p.mu.Unlock()
@@ -152,7 +152,7 @@ func (p *Slice) Get(ctx context.Context) (io.Closer, error) {
 
 // Put adds a item to the p's free pool.
 // err is optionally the last error that occurred on this item.
-func (p *Slice) Put(ctx context.Context, c io.Closer, forceClose bool) error {
+func (p *Slice) Put(ctx context.Context, c io.ReadWriteCloser, forceClose bool) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if forceClose {
@@ -176,7 +176,7 @@ func (p *Slice) Put(ctx context.Context, c io.Closer, forceClose bool) error {
 // If err == nil, then i must not equal nil.
 // If a item was fulfilled or the *item was placed in the
 // freeItem list, then true is returned, otherwise false is returned.
-func (p *Slice) putItemLocked(c io.Closer) bool {
+func (p *Slice) putItemLocked(c io.ReadWriteCloser) bool {
 	if p.closed {
 		return false
 	}
