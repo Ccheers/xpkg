@@ -258,7 +258,7 @@ func TestWithCancel(t *testing.T) {
 		<-ctx.Done()
 		return ctx.Err()
 	})
-	g.Wait()
+	doneErr = g.Wait()
 	if doneErr != context.Canceled {
 		t.Error("error should be Canceled")
 	}

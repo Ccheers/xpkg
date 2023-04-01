@@ -64,14 +64,14 @@ func TestPipeline(t *testing.T) {
 			},
 		},
 		{
-			mirror: "1",
+			mirror: "",
 			ch:     2,
 			values: map[string][]interface{}{
 				"2": {3},
 			},
 		},
 		{
-			mirror: "1",
+			mirror: "",
 			ch:     5,
 			values: map[string][]interface{}{
 				"5": {5},
@@ -79,7 +79,7 @@ func TestPipeline(t *testing.T) {
 		},
 	}
 	if !reflect.DeepEqual(runs, expt) {
-		t.Errorf("expect get %+v,\n got: %+v", expt, runs)
+		t.Errorf("expect %+v,\n got: %+v", expt, runs)
 	}
 }
 

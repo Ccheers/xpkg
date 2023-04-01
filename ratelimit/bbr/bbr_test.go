@@ -119,7 +119,15 @@ func TestBBRMinRt(t *testing.T) {
 	bucketDuration = time.Millisecond * 100
 	bbr = newLimiter(confForTest()).(*BBR)
 	bbr.rtStat = metric.NewRollingCounter(metric.RollingCounterOpts{Size: 10, BucketDuration: bucketDuration})
-	assert.Equal(t, int64(1), bbr.minRT())
+	for i := 0; i < 10; i++ {
+		for j := i*10 + 1; j <= i*10+10; j++ {
+			bbr.rtStat.Add(int64(j))
+		}
+		if i != 9 {
+			time.Sleep(bucketDuration)
+		}
+	}
+	assert.Equal(t, int64(6), bbr.minRT())
 }
 
 func TestBBRMinRtWithCache(t *testing.T) {

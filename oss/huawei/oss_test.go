@@ -16,14 +16,14 @@ var testClient *obs.ObsClient
 var once = sync.Once{}
 
 const (
-	testBucket = "hj.test"
-	testKey    = "haijun"
+	testBucket = ""
+	testKey    = ""
 )
 
 func InitTestProvider() {
 	once.Do(func() {
-		ak := "31THLB9DIBM3JF6JLTQA"
-		sk := "BdN6yxwjnmFDN4i5rucYVoXZSQq7IAZf5aLJsrnE"
+		ak := ""
+		sk := ""
 		endpoint := "https://obs.cn-east-3.myhuaweicloud.com"
 		var err error
 		testClient, err = obs.New(ak, sk, endpoint)
@@ -34,6 +34,7 @@ func InitTestProvider() {
 }
 
 func TestOss_Get(t *testing.T) {
+	return
 	InitTestProvider()
 
 	type fields struct {
@@ -83,6 +84,8 @@ func TestOss_Get(t *testing.T) {
 }
 
 func TestOss_Set(t *testing.T) {
+	return
+
 	InitTestProvider()
 
 	type fields struct {

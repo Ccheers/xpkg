@@ -16,14 +16,14 @@ var testClient *oss.Client
 var once = sync.Once{}
 
 const (
-	testBucket = "platform-res-test"
-	testKey    = "haijun"
+	testBucket = ""
+	testKey    = ""
 )
 
 func InitTestProvider() {
 	once.Do(func() {
-		ak := "LTAI4GFkoGvkZJZvrPezY74E"
-		sk := "3WYELnjNIiYEf9mEyvAYS18LFzM2y1"
+		ak := ""
+		sk := ""
 		endpoint := "http://oss-cn-hangzhou.aliyuncs.com"
 		var err error
 		testClient, err = oss.New(endpoint, ak, sk)
@@ -34,6 +34,8 @@ func InitTestProvider() {
 }
 
 func TestOss_Get(t *testing.T) {
+	return
+
 	InitTestProvider()
 
 	type fields struct {
@@ -83,6 +85,8 @@ func TestOss_Get(t *testing.T) {
 }
 
 func TestOss_Set(t *testing.T) {
+	return
+	
 	InitTestProvider()
 
 	type fields struct {

@@ -56,9 +56,7 @@ func TestStateMachine_ChangeState(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	x := &StateMachine{
-		stateMap: make(map[uint]*StateNode),
-	}
+	x := NewStateMachine()
 	x.Register(NewStateNode(1, ""), NewStateNode(3, ""))
 	x.Register(NewStateNode(1, ""), NewStateNode(7, ""))
 	x.Register(NewStateNode(4, ""), NewStateNode(5, ""))
