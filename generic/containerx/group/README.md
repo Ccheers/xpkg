@@ -3,7 +3,7 @@
 # group
 
 ```go
-import "github.com/ccheers/xpkg/container/group"
+import "github.com/ccheers/xpkg/generic/containerx/group"
 ```
 
 Package group provides a sample lazy load container. The group only creating a new object not until the object is needed by user. And it will cache all the objects to reduce the creation of object.
@@ -11,10 +11,10 @@ Package group provides a sample lazy load container. The group only creating a n
 ## Index
 
 - [type Group](<#type-group>)
-  - [func NewGroup(new func() interface{}) *Group](<#func-newgroup>)
-  - [func (g *Group) Clear()](<#func-group-clear>)
-  - [func (g *Group) Get(key string) interface{}](<#func-group-get>)
-  - [func (g *Group) Reset(new func() interface{})](<#func-group-reset>)
+  - [func NewGroup[T any](new func() T) *Group[T]](<#func-newgroup>)
+  - [func (g *Group[T]) Clear()](<#func-groupt-clear>)
+  - [func (g *Group[T]) Get(key string) T](<#func-groupt-get>)
+  - [func (g *Group[T]) Reset(new func() T)](<#func-groupt-reset>)
 
 
 ## type Group
@@ -22,7 +22,7 @@ Package group provides a sample lazy load container. The group only creating a n
 Group is a lazy load container.
 
 ```go
-type Group struct {
+type Group[T any] struct {
     sync.RWMutex
     // contains filtered or unexported fields
 }
@@ -31,23 +31,23 @@ type Group struct {
 ### func NewGroup
 
 ```go
-func NewGroup(new func() interface{}) *Group
+func NewGroup[T any](new func() T) *Group[T]
 ```
 
 NewGroup news a group container.
 
-### func \(\*Group\) Clear
+### func \(\*Group\[T\]\) Clear
 
 ```go
-func (g *Group) Clear()
+func (g *Group[T]) Clear()
 ```
 
 Clear deletes all objects.
 
-### func \(\*Group\) Get
+### func \(\*Group\[T\]\) Get
 
 ```go
-func (g *Group) Get(key string) interface{}
+func (g *Group[T]) Get(key string) T
 ```
 
 Get gets the object by the given key.
@@ -57,15 +57,15 @@ Get gets the object by the given key.
 
 ```go
 {
-	new := func() interface{} {
+	new := func() *Counter {
 		fmt.Println("Only Once")
 		return &Counter{}
 	}
 	group := NewGroup(new)
 
-	group.Get("pass").(*Counter).Incr()
+	group.Get("pass").Incr()
 
-	group.Get("pass").(*Counter).Incr()
+	group.Get("pass").Incr()
 
 }
 ```
@@ -79,10 +79,10 @@ Only Once
 </p>
 </details>
 
-### func \(\*Group\) Reset
+### func \(\*Group\[T\]\) Reset
 
 ```go
-func (g *Group) Reset(new func() interface{})
+func (g *Group[T]) Reset(new func() T)
 ```
 
 Reset resets the new function and deletes all existing objects.
@@ -92,19 +92,19 @@ Reset resets the new function and deletes all existing objects.
 
 ```go
 {
-	new := func() interface{} {
+	new := func() *Counter {
 		return &Counter{}
 	}
 	group := NewGroup(new)
 
-	newV2 := func() interface{} {
+	newV2 := func() *Counter {
 		fmt.Println("New V2")
 		return &Counter{}
 	}
 
 	group.Reset(newV2)
 
-	group.Get("pass").(*Counter).Incr()
+	group.Get("pass").Incr()
 
 }
 ```
