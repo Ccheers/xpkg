@@ -248,21 +248,20 @@ func TestZeroGroup(t *testing.T) {
 }
 
 func TestWithCancel(t *testing.T) {
-	g := WithCancel(context.Background())
+	cancelCtx, cancel := context.WithCancel(context.Background())
+	cancel()
+	g := WithCancel(cancelCtx)
 	g.Go(func(ctx context.Context) error {
 		time.Sleep(100 * time.Millisecond)
 		return fmt.Errorf("boom")
 	})
 	var doneErr error
 	g.Go(func(ctx context.Context) error {
-		select {
-		case <-ctx.Done():
-			doneErr = ctx.Err()
-		}
-		return doneErr
+		<-ctx.Done()
+		return ctx.Err()
 	})
-	g.Wait()
-	if doneErr != context.Canceled {
-		t.Error("error should be Canceled")
+	doneErr = g.Wait()
+	if !errors.Is(doneErr, context.Canceled) {
+		t.Errorf("except %v got %v", context.Canceled, doneErr)
 	}
 }

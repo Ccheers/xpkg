@@ -2,13 +2,12 @@ package aqm
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"github.com/ccheers/xpkg/ecode"
 )
 
 var testConf = &Config{
@@ -71,7 +70,7 @@ func testPush(q *Queue, sleep time.Duration, delay time.Duration, drop *int64, t
 			ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Millisecond*1000))
 			defer cancel()
 			if err := q.Push(ctx); err != nil {
-				if err == ecode.LimitExceed {
+				if errors.Is(err, ErrLimitExceed) {
 					atomic.AddInt64(drop, 1)
 				} else {
 					atomic.AddInt64(tm, 1)

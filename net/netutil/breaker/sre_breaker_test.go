@@ -100,7 +100,7 @@ func TestSRESelfProtection(t *testing.T) {
 	t.Run("total request > 100, total < 2 * success", func(t *testing.T) {
 		b := getSRE()
 		size := rand.Intn(10000000)
-		succ := int(math.Ceil(float64(size))) + 1
+		succ := size + 1
 		markSuccess(b, succ)
 		markFailed(b, size-succ)
 		assert.Equal(t, b.Allow(), nil)

@@ -3,7 +3,6 @@ package paladin
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -47,7 +46,7 @@ func readAllPaths(base string) ([]string, error) {
 	// dirs or file to paths
 	var paths []string
 	if fi.IsDir() {
-		files, err := ioutil.ReadDir(base)
+		files, err := os.ReadDir(base)
 		if err != nil {
 			return nil, fmt.Errorf("read dir %s error: %s", base, err)
 		}
@@ -75,7 +74,7 @@ func loadValuesFromPaths(paths []string) (map[string]*Value, error) {
 }
 
 func loadValue(fpath string) (*Value, error) {
-	data, err := ioutil.ReadFile(fpath)
+	data, err := os.ReadFile(fpath)
 	if err != nil {
 		return nil, err
 	}

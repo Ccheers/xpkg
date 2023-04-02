@@ -1,6 +1,7 @@
 package breaker
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"math/rand"
@@ -8,9 +9,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ccheers/xpkg/ecode"
 	"github.com/ccheers/xpkg/stat/metric"
 )
+
+var ErrServiceUnavailable = fmt.Errorf("service unavailable")
 
 // sreBreaker is a sre CircuitBreaker pattern.
 type sreBreaker struct {
@@ -73,7 +75,7 @@ func (b *sreBreaker) Allow() error {
 	drop := b.trueOnProba(dr)
 	log.Printf("breaker: drop ratio: %f, drop: %t", dr, drop)
 	if drop {
-		return ecode.ServiceUnavailable
+		return ErrServiceUnavailable
 	}
 	return nil
 }

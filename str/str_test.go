@@ -47,7 +47,7 @@ func TestSplitInts(t *testing.T) {
 }
 
 func BenchmarkJoinInts(b *testing.B) {
-	is := make([]int64, 10000, 10000)
+	is := make([]int64, 10000)
 	for i := int64(0); i < 10000; i++ {
 		is[i] = i
 	}

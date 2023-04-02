@@ -3,7 +3,6 @@ package aliyun
 import (
 	"context"
 	"io"
-	"io/ioutil"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
@@ -36,6 +35,6 @@ func (o *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, 
 	}
 	defer body.Close()
 
-	resp, err = ioutil.ReadAll(body)
+	resp, err = io.ReadAll(body)
 	return
 }

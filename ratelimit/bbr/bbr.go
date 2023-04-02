@@ -2,13 +2,13 @@ package bbr
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math"
 	"sync/atomic"
 	"time"
 
 	"github.com/ccheers/xpkg/container/group"
-	"github.com/ccheers/xpkg/ecode"
 	limit "github.com/ccheers/xpkg/ratelimit"
 	"github.com/ccheers/xpkg/stat/metric"
 
@@ -25,6 +25,8 @@ var (
 		CPUThreshold: 800,
 	}
 )
+
+var ErrLimitExceed = fmt.Errorf("limit exceed")
 
 type cpuGetter func() int64
 
@@ -217,7 +219,7 @@ func (l *BBR) Allow(ctx context.Context, opts ...limit.AllowOption) (func(info l
 		opt.Apply(&allowOpts)
 	}
 	if l.shouldDrop() {
-		return nil, ecode.LimitExceed
+		return nil, ErrLimitExceed
 	}
 	atomic.AddInt64(&l.inFlight, 1)
 	stime := time.Since(initTime)

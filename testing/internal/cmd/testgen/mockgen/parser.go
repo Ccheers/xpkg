@@ -33,7 +33,6 @@ import (
 	"go/parser"
 	"go/token"
 	"go/types"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -45,12 +44,6 @@ import (
 	"golang.org/x/mod/modfile"
 
 	"github.com/golang/mock/mockgen/model"
-)
-
-var (
-	version = ""
-	commit  = "none"
-	date    = "unknown"
 )
 
 var (
@@ -633,31 +626,6 @@ func isVariadic(f *ast.FuncType) bool {
 	return ok
 }
 
-// packageNameOfDir get package import path via dir
-func packageNameOfDir(srcDir string) (string, error) {
-	files, err := ioutil.ReadDir(srcDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var goFilePath string
-	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), ".go") {
-			goFilePath = file.Name()
-			break
-		}
-	}
-	if goFilePath == "" {
-		return "", fmt.Errorf("go source file not found %s", srcDir)
-	}
-
-	packageImport, err := parsePackageImport(srcDir)
-	if err != nil {
-		return "", err
-	}
-	return packageImport, nil
-}
-
 // createPackageMap returns a map of import path to package name
 // for specified importPaths.
 func createPackageMap(importPaths []string) map[string]string {
@@ -684,10 +652,6 @@ func createPackageMap(importPaths []string) map[string]string {
 	return pkgMap
 }
 
-func printVersion() {
-	fmt.Printf("v%s\nCommit: %s\nDate: %s\n", version, commit, date)
-}
-
 // parseImportPackage get package import path via source file
 // an alternative implementation is to use:
 // cfg := &packages.Config{Mode: packages.NeedName, Tests: true, Dir: srcDir}
@@ -699,7 +663,7 @@ func parsePackageImport(srcDir string) (string, error) {
 	if moduleMode != "off" {
 		currentDir := srcDir
 		for {
-			dat, err := ioutil.ReadFile(filepath.Join(currentDir, "go.mod"))
+			dat, err := os.ReadFile(filepath.Join(currentDir, "go.mod"))
 			if os.IsNotExist(err) {
 				if currentDir == filepath.Dir(currentDir) {
 					// at the root
