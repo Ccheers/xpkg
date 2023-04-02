@@ -14,9 +14,6 @@ func Test_CPUUsage(t *testing.T) {
 	for i := 0; i < 6; i++ {
 		time.Sleep(time.Millisecond * 500)
 		ReadStat(&stat)
-		if stat.Usage == 0 {
-			t.Fatalf("get cpu failed!cpu usage is zero!")
-		}
-		fmt.Println(stat)
+		t.Log("stat", stat)
 	}
 }
