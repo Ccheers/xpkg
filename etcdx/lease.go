@@ -65,11 +65,9 @@ func (x *ClientX) TryLease(ctx context.Context, key string, value string, opts .
 	// 3, 处理续租应答的协程
 	go func() {
 		for {
-			select {
-			case keepResp := <-keepRespChan: // 自动续租的应答
-				if keepResp == nil {
-					return
-				}
+			keepResp := <-keepRespChan // 自动续租的应答
+			if keepResp == nil {
+				return
 			}
 		}
 	}()
