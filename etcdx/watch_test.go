@@ -37,7 +37,7 @@ func TestClientX_BatchWatch(t *testing.T) {
 	go func() {
 		err := x.Watch(ctx, "/test/123", cb, WithWatchPrefix(), WithWatchSessionTTL(5))
 		if err != nil {
-			t.Fatalf("Watch failed: %v", err)
+			panic(err)
 		}
 	}()
 
