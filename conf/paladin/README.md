@@ -62,7 +62,7 @@ import "github.com/ccheers/xpkg/conf/paladin"
   - [func (v *Value) Slice(dst interface{}) error](<#func-value-slice>)
   - [func (v *Value) String() (string, error)](<#func-value-string>)
   - [func (v *Value) Unmarshal(un encoding.TextUnmarshaler) error](<#func-value-unmarshal>)
-  - [func (v *Value) UnmarshalJSON(dst interface{}) error](<#func-value-unmarshaljson>)
+  - [func (v *Value) UnmarshalFromJSON(dst interface{}) error](<#func-value-unmarshalfromjson>)
   - [func (v *Value) UnmarshalTOML(dst interface{}) error](<#func-value-unmarshaltoml>)
   - [func (v *Value) UnmarshalYAML(dst interface{}) error](<#func-value-unmarshalyaml>)
 - [type Watcher](<#type-watcher>)
@@ -683,13 +683,13 @@ func (v *Value) Unmarshal(un encoding.TextUnmarshaler) error
 
 Unmarshal is the interface implemented by an object that can unmarshal a textual representation of itself.
 
-### func \(\*Value\) UnmarshalJSON
+### func \(\*Value\) UnmarshalFromJSON
 
 ```go
-func (v *Value) UnmarshalJSON(dst interface{}) error
+func (v *Value) UnmarshalFromJSON(dst interface{}) error
 ```
 
-UnmarshalJSON unmarhsal json to struct.
+UnmarshalFromJSON unmarhsal json to struct.
 
 ### func \(\*Value\) UnmarshalTOML
 

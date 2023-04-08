@@ -8,6 +8,7 @@ import "github.com/ccheers/xpkg/ratelimit/bbr"
 
 ## Index
 
+- [Variables](<#variables>)
 - [type BBR](<#type-bbr>)
   - [func (l *BBR) Allow(ctx context.Context, opts ...limit.AllowOption) (func(info limit.DoneInfo), error)](<#func-bbr-allow>)
   - [func (l *BBR) Stat() Stat](<#func-bbr-stat>)
@@ -18,6 +19,12 @@ import "github.com/ccheers/xpkg/ratelimit/bbr"
   - [func (g *Group) Get(key string) limit.Limiter](<#func-group-get>)
 - [type Stat](<#type-stat>)
 
+
+## Variables
+
+```go
+var ErrLimitExceed = fmt.Errorf("limit exceed")
+```
 
 ## type BBR
 
