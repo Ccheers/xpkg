@@ -2,6 +2,14 @@ on: [push, pull_request]
 name: Test
 jobs:
   test:
+    services:
+      etcd:
+        image: gcr.io/etcd-development/etcd:v3.5.0
+        ports:
+          - 2379:2379
+        env:
+          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
     strategy:
       matrix:
         go-version: [1.19.x]
