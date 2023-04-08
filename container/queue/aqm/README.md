@@ -8,6 +8,7 @@ import "github.com/ccheers/xpkg/container/queue/aqm"
 
 ## Index
 
+- [Variables](<#variables>)
 - [type Config](<#type-config>)
 - [type Queue](<#type-queue>)
   - [func Default() *Queue](<#func-default>)
@@ -19,6 +20,12 @@ import "github.com/ccheers/xpkg/container/queue/aqm"
 - [type Stat](<#type-stat>)
 
 
+## Variables
+
+```go
+var ErrLimitExceed = fmt.Errorf("limit exceed")
+```
+
 ## type Config
 
 Config codel config.
@@ -27,7 +34,7 @@ Config codel config.
 type Config struct {
     Target         int64 // target queue delay (default 20 ms).
     Internal       int64 // sliding minimum time window width (default 500 ms)
-    MaxOutstanding int64 //max num of concurrent acquires
+    MaxOutstanding int64 // max num of concurrent acquires
 }
 ```
 

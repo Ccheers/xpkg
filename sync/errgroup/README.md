@@ -10,11 +10,35 @@ Package errgroup provides synchronization, error propagation, and Context errgro
 
 errgroup 包含三种常用方式
 
-1、直接使用 此时不会因为一个任务失败导致所有任务被 cancel: g := &errgroup.Group\{\} g.Go\(func\(ctx context.Context\) \{ // NOTE: 此时 ctx 为 context.Background\(\) // do something \}\)
+1、直接使用 此时不会因为一个任务失败导致所有任务被 cancel:
 
-2、WithContext 使用 WithContext 时不会因为一个任务失败导致所有任务被 cancel: g := errgroup.WithContext\(ctx\) g.Go\(func\(ctx context.Context\) \{ // NOTE: 此时 ctx 为 errgroup.WithContext 传递的 ctx // do something \}\)
+```
+g := &errgroup.Group{}
+g.Go(func(ctx context.Context) {
+	// NOTE: 此时 ctx 为 context.Background()
+	// do something
+})
+```
 
-3、WithCancel 使用 WithCancel 时如果有一个人任务失败会导致所有\*未进行或进行中\*的任务被 cancel: g := errgroup.WithCancel\(ctx\) g.Go\(func\(ctx context.Context\) \{ // NOTE: 此时 ctx 是从 errgroup.WithContext 传递的 ctx 派生出的 ctx // do something \}\)
+2、WithContext 使用 WithContext 时不会因为一个任务失败导致所有任务被 cancel:
+
+```
+g := errgroup.WithContext(ctx)
+g.Go(func(ctx context.Context) {
+	// NOTE: 此时 ctx 为 errgroup.WithContext 传递的 ctx
+	// do something
+})
+```
+
+3、WithCancel 使用 WithCancel 时如果有一个人任务失败会导致所有\*未进行或进行中\*的任务被 cancel:
+
+```
+g := errgroup.WithCancel(ctx)
+g.Go(func(ctx context.Context) {
+	// NOTE: 此时 ctx 是从 errgroup.WithContext 传递的 ctx 派生出的 ctx
+	// do something
+})
+```
 
 设置最大并行数 GOMAXPROCS 对以上三种使用方式均起效 NOTE: 由于 errgroup 实现问题,设定 GOMAXPROCS 的 errgroup 需要立即调用 Wait\(\) 例如:
 
@@ -119,7 +143,7 @@ JustErrors illustrates the use of a Group in place of a sync.WaitGroup to simpli
 ```go
 {
 	var g Group
-	var urls = []string{
+	urls := []string{
 		"http://www.golang.org/",
 		"http://www.google.com/",
 		"http://www.somestupidname.com/",

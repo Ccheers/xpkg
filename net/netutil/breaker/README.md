@@ -9,6 +9,7 @@ import "github.com/ccheers/xpkg/net/netutil/breaker"
 ## Index
 
 - [Constants](<#constants>)
+- [Variables](<#variables>)
 - [func Go(name string, run, fallback func() error) error](<#func-go>)
 - [func Init(conf *Config)](<#func-init>)
 - [type Breaker](<#type-breaker>)
@@ -36,6 +37,12 @@ const (
     // one request, but not state closed.
     StateHalfopen
 )
+```
+
+## Variables
+
+```go
+var ErrServiceUnavailable = fmt.Errorf("service unavailable")
 ```
 
 ## func Go

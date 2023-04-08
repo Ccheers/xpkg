@@ -8,8 +8,692 @@ import "github.com/ccheers/xpkg/generic/arrayx"
 
 ## Index
 
+- [Variables](<#variables>)
+- [func Contains[E comparable](haystack []E, needle E) (bool, error)](<#func-contains>)
+- [func ContainsAll[E comparable](haystack []E, needle []E) bool](<#func-containsall>)
+- [func ContainsAny[E comparable](haystack, needle []E) bool](<#func-containsany>)
+- [func ContainsAnyByte(haystack []byte, needle []byte) bool](<#func-containsanybyte>)
+- [func ContainsAnyUint8(haystack []uint8, needle []uint8) bool](<#func-containsanyuint8>)
+- [func ContainsByte(haystack []byte, needle byte) bool](<#func-containsbyte>)
+- [func ContainsIP(haystack []net.IP, needle net.IP) bool](<#func-containsip>)
+- [func ContainsUint8(haystack []uint8, needle uint8) bool](<#func-containsuint8>)
+- [func Dedup[E constraints.Ordered](s []E) []E](<#func-dedup>)
+- [func DedupBools(a []bool) []bool](<#func-dedupbools>)
+- [func EqualUnordered[E comparable](a []E, b []E) bool](<#func-equalunordered>)
+- [func Filter[S ~[]T, T any](s S, fn func(T) bool) S](<#func-filter>)
+- [func Intersection[E comparable](a, b []E) []E](<#func-intersection>)
+- [func Join(s interface{}, glue string) string](<#func-join>)
+- [func Map[S ~[]T, T, M any](s S, fn func(T) M) []M](<#func-map>)
+- [func Mutate[S ~[]T, T any](s S, fn func(T) T) S](<#func-mutate>)
+- [func Reduce[S ~[]T, T any](s S, fn func(T) bool) S](<#func-reduce>)
+- [func Reverse[E any](s []E) []E](<#func-reverse>)
+- [func Shuffle[E any](a []E, src rand.Source) []E](<#func-shuffle>)
 - [func UniqArray[T comparable](arr []T) []T](<#func-uniqarray>)
 
+
+## Variables
+
+ContainsAllBools checks if bool slice contains all elements of given slice Deprecated: use ContainsAll instead
+
+```go
+var ContainsAllBools = ContainsAll[bool]
+```
+
+ContainsAllStrings checks if string slice contains all elements of given slice Deprecated: use ContainsAll instead
+
+```go
+var ContainsAllStrings = ContainsAll[string]
+```
+
+ContainsAnyBool checks if bool slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyBool = ContainsAny[bool]
+```
+
+ContainsAnyFloat32 checks if float32 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyFloat32 = ContainsAny[float32]
+```
+
+ContainsAnyFloat64 checks if float64 slice any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyFloat64 = ContainsAny[float64]
+```
+
+ContainsAnyInt checks if int slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyInt = ContainsAny[int]
+```
+
+ContainsAnyInt16 checks if int16 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyInt16 = ContainsAny[int16]
+```
+
+ContainsAnyInt32 checks if int32 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyInt32 = ContainsAny[int32]
+```
+
+ContainsAnyInt64 checks if int64 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyInt64 = ContainsAny[int64]
+```
+
+ContainsAnyInt8 checks if int8 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyInt8 = ContainsAny[int8]
+```
+
+ContainsAnyString checks if string slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyString = ContainsAny[string]
+```
+
+ContainsAnyUint checks if uint slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyUint = ContainsAny[uint]
+```
+
+ContainsAnyUint16 checks if uint16 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyUint16 = ContainsAny[uint16]
+```
+
+ContainsAnyUint32 checks if uint32 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyUint32 = ContainsAny[uint32]
+```
+
+ContainsAnyUint64 checks if uint64 slice contains any element from given slice Deprecated: use ContainsAny instead.
+
+```go
+var ContainsAnyUint64 = ContainsAny[uint64]
+```
+
+ContainsBool checks if bool slice contains given bool. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsBool = slices.Contains[bool]
+```
+
+ContainsFloat32 checks if float32 slice contains given float32. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsFloat32 = slices.Contains[float32]
+```
+
+ContainsFloat64 checks if float64 slice contains given float64. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsFloat64 = slices.Contains[float64]
+```
+
+ContainsInt checks if int slice contains given int
+
+```go
+var ContainsInt = slices.Contains[int]
+```
+
+ContainsInt16 checks if int16 slice contains given int16. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsInt16 = slices.Contains[int16]
+```
+
+ContainsInt32 checks if int32 slice contains given int32. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsInt32 = slices.Contains[int32]
+```
+
+ContainsInt64 checks if int64 slice contains given int64. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsInt64 = slices.Contains[int64]
+```
+
+ContainsInt8 checks if int8 slice contains given int8. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsInt8 = slices.Contains[int8]
+```
+
+ContainsString checks if string slice contains given string. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsString = slices.Contains[string]
+```
+
+ContainsUUID checks if UUID slice contains given UUID. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsUUID = slices.Contains[uuid.UUID]
+```
+
+ContainsUint checks if uint slice contains given uint. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsUint = slices.Contains[uint]
+```
+
+ContainsUint16 checks if uint16 slice contains given uint16. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsUint16 = slices.Contains[uint16]
+```
+
+ContainsUint32 checks if uint32 slice contains given uint32. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsUint32 = slices.Contains[uint32]
+```
+
+ContainsUint64 checks if uint64 slice contains given uint64. Deprecated: use golang.org/x/exp/slices.Contains instead
+
+```go
+var ContainsUint64 = slices.Contains[uint64]
+```
+
+DedupFloat32s removes duplicate values from float32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupFloat32s = Dedup[float32]
+```
+
+DedupFloat64s removes duplicate values from float64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupFloat64s = Dedup[float64]
+```
+
+DedupInt16s removes duplicate values from int16 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupInt16s = Dedup[int16]
+```
+
+DedupInt32s removes duplicate values from int32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupInt32s = Dedup[int32]
+```
+
+DedupInt64s removes duplicate values from int64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupInt64s = Dedup[int64]
+```
+
+DedupInt8s removes duplicate values from int8 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupInt8s = Dedup[int8]
+```
+
+DedupInts removes duplicate values from ints slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupInts = Dedup[int]
+```
+
+DedupStrings removes duplicate values from string slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupStrings = Dedup[string]
+```
+
+DedupUint16s removes duplicate values from uint16 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupUint16s = Dedup[uint16]
+```
+
+DedupUint32s removes duplicate values from uint32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupUint32s = Dedup[uint32]
+```
+
+DedupUint64s removes duplicate values from uint64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupUint64s = Dedup[uint64]
+```
+
+DedupUint8s removes duplicate values from uint8 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupUint8s = Dedup[uint8]
+```
+
+DedupUints removes duplicate values from uint slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Dedup instead.
+
+```go
+var DedupUints = Dedup[uint]
+```
+
+EqualAnyOrderStrings checks if string slices are equal, order independent. Deprecated: use EqualUnordered instead.
+
+```go
+var EqualAnyOrderStrings = EqualUnordered[string]
+```
+
+IntersectBools returns intersection of two bool slices Deprecated: use Intersection instead.
+
+```go
+var IntersectBools = Intersection[bool]
+```
+
+IntersectFloat32s returns intersection of two float32 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectFloat32s = Intersection[float32]
+```
+
+IntersectFloat64s returns intersection of two float64 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectFloat64s = Intersection[float64]
+```
+
+IntersectInt16s returns intersection of two int16 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectInt16s = Intersection[int16]
+```
+
+IntersectInt32s returns intersection of two int32 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectInt32s = Intersection[int32]
+```
+
+IntersectInt64s returns intersection of two int64 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectInt64s = Intersection[int64]
+```
+
+IntersectInt8s returns intersection of two int8 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectInt8s = Intersection[int8]
+```
+
+IntersectInts returns intersection of two int slices Deprecated: use Intersection instead.
+
+```go
+var IntersectInts = Intersection[int]
+```
+
+IntersectStrings returns intersection of two string slices Deprecated: use Intersection instead.
+
+```go
+var IntersectStrings = Intersection[string]
+```
+
+IntersectUint16s returns intersection of two uint16 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectUint16s = Intersection[uint16]
+```
+
+IntersectUint32s returns intersection of two uint32 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectUint32s = Intersection[uint32]
+```
+
+IntersectUint64s returns intersection of two uint64 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectUint64s = Intersection[uint64]
+```
+
+IntersectUint8s returns intersection of two uint8 slices Deprecated: use Intersection instead.
+
+```go
+var IntersectUint8s = Intersection[uint8]
+```
+
+IntersectUints returns intersection of two uint slices Deprecated: use Intersection instead.
+
+```go
+var IntersectUints = Intersection[uint]
+```
+
+ReverseBools reverses given bool slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseBools = Reverse[bool]
+```
+
+ReverseFloat32s reverses given float32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseFloat32s = Reverse[float32]
+```
+
+ReverseFloat64s reverses given float64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseFloat64s = Reverse[float64]
+```
+
+ReverseInt16s reverses given int16 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseInt16s = Reverse[int16]
+```
+
+ReverseInt32s reverses given int32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseInt32s = Reverse[int32]
+```
+
+ReverseInt64s reverses given int64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseInt64s = Reverse[int64]
+```
+
+ReverseInt8s reverses given int8 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseInt8s = Reverse[int8]
+```
+
+ReverseInts reverses given int slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseInts = Reverse[int]
+```
+
+ReverseStrings reverses given string slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseStrings = Reverse[string]
+```
+
+ReverseUint16s reverses given uint16 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseUint16s = Reverse[uint16]
+```
+
+ReverseUint32s reverses given uint32 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseUint32s = Reverse[uint32]
+```
+
+ReverseUint64s reverses given uint64 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseUint64s = Reverse[uint64]
+```
+
+ReverseUint8s reverses given uint8 slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseUint8s = Reverse[uint8]
+```
+
+ReverseUints reverses given uint slice. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Reverse instead.
+
+```go
+var ReverseUints = Reverse[uint]
+```
+
+ShuffleBools shuffles values in bool slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleBools = Shuffle[bool]
+```
+
+ShuffleFloat32s shuffles values in float32 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleFloat32s = Shuffle[float32]
+```
+
+ShuffleFloat64s shuffles values in float64 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleFloat64s = Shuffle[float64]
+```
+
+ShuffleInt16s shuffles values in int16 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleInt16s = Shuffle[int16]
+```
+
+ShuffleInt32s shuffles values in int32 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleInt32s = Shuffle[int32]
+```
+
+ShuffleInt64s shuffles values in int64 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleInt64s = Shuffle[int64]
+```
+
+ShuffleInt8s shuffles values in int8 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleInt8s = Shuffle[int8]
+```
+
+ShuffleInts shuffles values in int slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleInts = Shuffle[int]
+```
+
+ShuffleStrings shuffles values in string slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleStrings = Shuffle[string]
+```
+
+ShuffleUint16s shuffles values in uint16 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleUint16s = Shuffle[uint16]
+```
+
+ShuffleUint32s shuffles values in uint32 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleUint32s = Shuffle[uint32]
+```
+
+ShuffleUint64s shuffles values in uint64 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleUint64s = Shuffle[uint64]
+```
+
+ShuffleUint8s shuffles values in uint8 slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleUint8s = Shuffle[uint8]
+```
+
+ShuffleUints shuffles values in uint slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand. Deprecated: use Shuffle instead.
+
+```go
+var ShuffleUints = Shuffle[uint]
+```
+
+## func Contains
+
+```go
+func Contains[E comparable](haystack []E, needle E) (bool, error)
+```
+
+Contains checks if slice of T contains given T Deprecated: use golang.org/x/exp/slices.Contains instead.
+
+## func ContainsAll
+
+```go
+func ContainsAll[E comparable](haystack []E, needle []E) bool
+```
+
+ContainsAll checks if slice of type E contains all elements of given slice, order independent
+
+## func ContainsAny
+
+```go
+func ContainsAny[E comparable](haystack, needle []E) bool
+```
+
+ContainsAny checks if slice of type E contains any element from given slice
+
+## func ContainsAnyByte
+
+```go
+func ContainsAnyByte(haystack []byte, needle []byte) bool
+```
+
+ContainsAnyByte checks if byte slice contains any element from given slice
+
+## func ContainsAnyUint8
+
+```go
+func ContainsAnyUint8(haystack []uint8, needle []uint8) bool
+```
+
+ContainsAnyUint8 checks if uint8 slice contains any element from given slice
+
+## func ContainsByte
+
+```go
+func ContainsByte(haystack []byte, needle byte) bool
+```
+
+ContainsByte checks if byte slice contains given byte
+
+## func ContainsIP
+
+```go
+func ContainsIP(haystack []net.IP, needle net.IP) bool
+```
+
+ContainsIP checks if net.IP slice contains given net.IP
+
+## func ContainsUint8
+
+```go
+func ContainsUint8(haystack []uint8, needle uint8) bool
+```
+
+ContainsUint8 checks if uint8 slice contains given uint8.
+
+## func Dedup
+
+```go
+func Dedup[E constraints.Ordered](s []E) []E
+```
+
+Dedup removes duplicate values from slice. It will alter original non\-empty slice, consider copy it beforehand.
+
+## func DedupBools
+
+```go
+func DedupBools(a []bool) []bool
+```
+
+DedupBools removes duplicate values from bool slice. It will alter original non\-empty slice, consider copy it beforehand.
+
+## func EqualUnordered
+
+```go
+func EqualUnordered[E comparable](a []E, b []E) bool
+```
+
+EqualUnordered checks if slices of type E are equal, order independent.
+
+## func Filter
+
+```go
+func Filter[S ~[]T, T any](s S, fn func(T) bool) S
+```
+
+Filter reduces slice values using given function. It operates with a copy of given slice
+
+## func Intersection
+
+```go
+func Intersection[E comparable](a, b []E) []E
+```
+
+Intersection returns intersection for slices of various built\-in types
+
+## func Join
+
+```go
+func Join(s interface{}, glue string) string
+```
+
+Join joins slice of any types
+
+## func Map
+
+```go
+func Map[S ~[]T, T, M any](s S, fn func(T) M) []M
+```
+
+Map applies given function to every value of slice
+
+## func Mutate
+
+```go
+func Mutate[S ~[]T, T any](s S, fn func(T) T) S
+```
+
+Mutate is like Map, but it prohibits type changes and modifies original slice.
+
+## func Reduce
+
+```go
+func Reduce[S ~[]T, T any](s S, fn func(T) bool) S
+```
+
+Reduce is like Filter, but modifies original slice.
+
+## func Reverse
+
+```go
+func Reverse[E any](s []E) []E
+```
+
+Reverse reverses given slice. It will alter original non\-empty slice, consider copy it beforehand.
+
+## func Shuffle
+
+```go
+func Shuffle[E any](a []E, src rand.Source) []E
+```
+
+Shuffle shuffles values in slice using given or pseudo\-random source. It will alter original non\-empty slice, consider copy it beforehand.
 
 ## func UniqArray
 

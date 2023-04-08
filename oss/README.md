@@ -64,9 +64,9 @@ type Type string
 
 ```go
 const (
-    //OssTypeHuaweiYun Oss 类型是华为云
+    // OssTypeHuaweiYun Oss 类型是华为云
     OssTypeHuaweiYun Type = "huaweiyun"
-    //OssTypeAliYun Oss 类型是阿里云
+    // OssTypeAliYun Oss 类型是阿里云
     OssTypeAliYun Type = "aliyun"
 )
 ```

@@ -398,8 +398,7 @@ type Metric interface {
 Opts contains the common arguments for creating Metric.
 
 ```go
-type Opts struct {
-}
+type Opts struct{}
 ```
 
 ## type PointGauge

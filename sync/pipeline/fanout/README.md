@@ -21,7 +21,7 @@ func addCache(c context.Context, id, value int) {
 
 func main() {
 	// 这里只是举个例子 真正使用的时候 应该用bm/rpc 传过来的context
-	var c = context.Background()
+	c := context.Background()
 	// 新建一个fanout 对象 名称为cache 名称主要用来上报监控和打日志使用 最好不要重复
 	// (可选参数) worker数量为1 表示后台只有1个线程在工作
 	// (可选参数) buffer 为1024 表示缓存chan长度为1024 如果chan慢了 再调用Do方法就会报错 设定长度主要为了防止OOM
@@ -51,11 +51,10 @@ func main() {
 
 ## Variables
 
+ErrFull chan full.
+
 ```go
-var (
-    // ErrFull chan full.
-    ErrFull = errors.New("fanout: chan full")
-)
+var ErrFull = errors.New("fanout: chan full")
 ```
 
 ## type Fanout

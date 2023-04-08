@@ -6,17 +6,19 @@
 ### {{ .Title }}
 
 {{ range .Commits -}}
-* {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }}
+  
+* {{ if .Scope -}} ** {{- .Scope }}:** {{ end }} {{- .Subject }} ({{ .Hash.Short }})
 {{ end }}
-{{ end -}}
+
+{{- end -}}
 
 {{- if .RevertCommits -}}
 ### Reverts
 
 {{ range .RevertCommits -}}
 * {{ .Revert.Header }}
-{{ end }}
-{{ end -}}
+{{- end }}
+{{- end -}}
 
 {{- if .NoteGroups -}}
 {{ range .NoteGroups -}}
@@ -24,7 +26,7 @@
 
 {{ range .Notes }}
 {{ .Body }}
-{{ end }}
-{{ end -}}
-{{ end -}}
-{{ end -}}
+{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
