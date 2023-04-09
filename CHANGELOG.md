@@ -1,4 +1,12 @@
 
+<a name="v1.0.4"></a>
+## [v1.0.4](https://github.com/Ccheers/xpkg/compare/v1.0.3...v1.0.4) (2023-04-08)
+
+### Feat
+
+* **arrayx:** 添加 yandex 数组库 (b6635b4)
+* **etcdx:** etcd 客户端库 (b6b4c9d)
+
 <a name="v1.0.3"></a>
 ## [v1.0.3](https://github.com/Ccheers/xpkg/compare/v1.0.2...v1.0.3) (2023-04-02)
 

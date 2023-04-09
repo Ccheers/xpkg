@@ -9,8 +9,8 @@ type ClientX struct {
 	logger *clientLogger
 }
 
-func NewClientX(client *clientv3.Client, logger *clientLogger) *ClientX {
-	return &ClientX{Client: client, logger: logger}
+func NewClientX(client *clientv3.Client, logger Logger) *ClientX {
+	return &ClientX{Client: client, logger: &clientLogger{logger: logger}}
 }
 
 type LogLevel string
