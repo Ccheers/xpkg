@@ -30,7 +30,7 @@ func (x *dummyWatchCallback) Reset() {
 func TestClientX_BatchWatch(t *testing.T) {
 	client := newETCDClient("127.0.0.1:2379")
 
-	x := NewClientX(client, newClientLog())
+	x := NewClientX(client, &emptyLog{})
 	cb := &dummyWatchCallback{m: make(map[string]*TargetNode)}
 	ctx := context.Background()
 
