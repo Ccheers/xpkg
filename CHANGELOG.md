@@ -1,4 +1,11 @@
 
+<a name="v1.0.5"></a>
+## [v1.0.5](https://github.com/Ccheers/xpkg/compare/v1.0.4...v1.0.5) (2023-04-10)
+
+### Fix
+
+* **etcdx:** 修复了日志组件引入错误的 bug (b09cae1)
+
 <a name="v1.0.4"></a>
 ## [v1.0.4](https://github.com/Ccheers/xpkg/compare/v1.0.3...v1.0.4) (2023-04-08)
 
