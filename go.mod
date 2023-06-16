@@ -1,6 +1,6 @@
 module github.com/ccheers/xpkg
 
-go 1.19
+go 1.20
 
 require (
 	github.com/BurntSushi/toml v0.4.1
@@ -20,6 +20,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.7
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	golang.org/x/mod v0.6.0
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/text v0.4.0
 	golang.org/x/tools v0.2.0
 	gopkg.in/yaml.v2 v2.4.0
