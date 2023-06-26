@@ -25,3 +25,15 @@ func Mutate[S ~[]T, T any](s S, fn func(T) T) S {
 	}
 	return s
 }
+
+// BuildMap builds map from slice
+func BuildMap[S ~[]T, T any, M comparable](s S, fn func(T) M) map[M]T {
+	if len(s) == 0 {
+		return make(map[M]T)
+	}
+	res := make(map[M]T, len(s))
+	for _, v := range s {
+		res[fn(v)] = v
+	}
+	return res
+}
