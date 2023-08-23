@@ -23,6 +23,10 @@ type T struct {
 	heap    *heap.Heap[*node]
 	objPool sync.Pool
 
+	latestGCAt time.Time
+
+	gcLock sync.Mutex
+
 	maxLen int
 
 	mu sync.RWMutex
@@ -40,12 +44,13 @@ func NewLRUCache(maxLen int) ILRUCache {
 			},
 		},
 		maxLen: maxLen,
-		mu:     sync.RWMutex{},
-		mm:     make(map[string]*node),
+		mm:     make(map[string]*node, maxLen),
 	}
 }
 
 func (x *T) Set(ctx context.Context, key string, value interface{}, expireAt time.Time) {
+	defer x.gcTick()
+
 	x.mu.Lock()
 	node := x.objPool.Get().(*node)
 	node.expireAt = expireAt
@@ -66,6 +71,8 @@ func (x *T) Set(ctx context.Context, key string, value interface{}, expireAt tim
 }
 
 func (x *T) Get(ctx context.Context, key string) (interface{}, bool) {
+	defer x.gcTick()
+
 	x.mu.RLock()
 	node, ok := x.mm[key]
 	x.mu.RUnlock()
@@ -76,4 +83,33 @@ func (x *T) Get(ctx context.Context, key string) (interface{}, bool) {
 		return nil, false
 	}
 	return node.value, ok
+}
+
+func (x *T) gcTick() {
+	const calmDuration = time.Second * 10
+	if !x.gcLock.TryLock() {
+		return
+	}
+	defer x.gcLock.Unlock()
+
+	now := time.Now()
+	if now.Sub(x.latestGCAt) < calmDuration {
+		return
+	}
+	x.mu.Lock()
+	for {
+		node, ok := x.heap.Pop()
+		if !ok {
+			break
+		}
+		if node.expireAt.Before(now) {
+			delete(x.mm, node.key)
+			x.objPool.Put(node)
+		} else {
+			x.heap.Push(node)
+			break
+		}
+	}
+	x.latestGCAt = now
+	x.mu.Unlock()
 }
