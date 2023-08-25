@@ -15,7 +15,6 @@ func TestNewLRUCache(t *testing.T) {
 
 	_, ok := cache.Get(ctx, "1")
 
-
 	if !ok {
 		t.Fatal("should be ok")
 	}
