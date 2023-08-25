@@ -14,6 +14,8 @@ func TestNewLRUCache(t *testing.T) {
 	cache.Set(ctx, "2", 2, time.Now().Add(time.Second))
 
 	_, ok := cache.Get(ctx, "1")
+
+
 	if !ok {
 		t.Fatal("should be ok")
 	}
