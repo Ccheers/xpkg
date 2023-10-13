@@ -104,6 +104,7 @@ func (x *T) gcTick() {
 		}
 		if node.expireAt.Before(now) {
 			delete(x.mm, node.key)
+			node.value = nil
 			x.objPool.Put(node)
 		} else {
 			x.heap.Push(node)
@@ -111,5 +112,11 @@ func (x *T) gcTick() {
 		}
 	}
 	x.latestGCAt = now
+	mm := make(map[string]*node, len(x.mm))
+	// 缩小 bucket 空隙
+	for k, v := range x.mm {
+		mm[k] = v
+	}
+	x.mm = mm
 	x.mu.Unlock()
 }
