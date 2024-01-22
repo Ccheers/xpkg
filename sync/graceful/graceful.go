@@ -13,9 +13,7 @@ import (
 	"github.com/ccheers/xpkg/sync/routinepool"
 )
 
-var (
-	ErrGracefulExitTimeout = fmt.Errorf("graceful exit timeout")
-)
+var ErrGracefulExitTimeout = fmt.Errorf("graceful exit timeout")
 
 type ILogger interface {
 	Warn(ctx context.Context, message string)
@@ -32,8 +30,7 @@ type IExiting interface {
 	Stop(ctx context.Context) error
 }
 
-type stdLogger struct {
-}
+type stdLogger struct{}
 
 func (x *stdLogger) Warn(ctx context.Context, message string) {
 	fmt.Printf("[%s][WARN]: %s\n", time.Now().String(), message)

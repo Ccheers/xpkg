@@ -69,5 +69,4 @@ func TestClientX_BatchWatch(t *testing.T) {
 
 	x.Close()
 	time.Sleep(time.Second)
-
 }
