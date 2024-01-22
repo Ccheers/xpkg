@@ -10,15 +10,14 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
-type emptyLog struct {
-}
+type emptyLog struct{}
 
 func (x *emptyLog) Logf(level LogLevel, template string, args ...interface{}) {
 	log.Printf(fmt.Sprintf("[%s] %s\n", level, template), args...)
 }
 
 func (x *emptyLog) Logw(level LogLevel, keyPairs ...interface{}) {
-	var args = []interface{}{"level", level}
+	args := []interface{}{"level", level}
 	args = append(args, keyPairs...)
 	log.Println(args...)
 }
