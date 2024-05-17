@@ -3,10 +3,14 @@ package routinepool
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 )
 
 var errPoolIsStopped = errors.New("routine pool is stopped")
@@ -25,8 +29,6 @@ type Pool interface {
 	Go(f RoutineFunc) error
 	// CtxGo executes f and accepts the context.
 	CtxGo(ctx context.Context, f RoutineFunc) error
-	// SetPanicHandler sets the panic handler.
-	SetPanicHandler(f func(context.Context, error))
 	// Stop the Pool graceful
 	Stop(ctx context.Context) error
 }
@@ -69,6 +71,7 @@ type pool struct {
 	cap int32
 	// Configuration information
 	config *Config
+
 	// linked list of tasks
 	taskHead  *task
 	taskTail  *task
@@ -78,25 +81,68 @@ type pool struct {
 	// Record the number of running workers
 	workerCount int32
 
-	// This method will be called when the worker panic
-	panicHandler func(context.Context, error)
-
 	// sign for the pool is stopped
 	isStop uint32
+
+	// metrics cancel func
+	cancel func() error
+
+	// metrics
+	taskCounter metric.Int64Counter
 }
 
 // NewPool creates a new pool with the given name, cap and config.
 func NewPool(name string, cap int32, config *Config) Pool {
+	p, err := NewPoolWithError(name, cap, config)
+	if err != nil {
+		panic(err)
+	}
+	return p
+}
+
+// NewPoolWithError creates a new pool with the given name, cap and config.
+// name 必须是 小写英文+下划线
+func NewPoolWithError(name string, cap int32, config *Config) (Pool, error) {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return nil, fmt.Errorf("pool name shoule not be empty")
+	}
 	p := &pool{
 		name:   name,
 		cap:    cap,
 		config: config,
 		isStop: poolStatusRunning,
 	}
-	p.SetPanicHandler(func(ctx context.Context, err error) {
-		log.Println(err.Error())
-	})
-	return p
+
+	meter := config.meterProvider.Meter("github.com/ccheers/xpkg/sync/routinepool")
+
+	// task counter
+	taskCounter, err := meter.Int64Counter("routinepool_process_count")
+	if err != nil {
+		return nil, err
+	}
+	p.taskCounter = taskCounter
+
+	// register the gauge of the number of workers
+	obc, err := meter.Int64ObservableCounter("routinepool_queue_len",
+		metric.WithInt64Callback(func(ctx context.Context, observer metric.Int64Observer) error {
+			observer.Observe(int64(p.taskCount), metric.WithAttributes(attribute.String("pool_name", p.name)))
+			return nil
+		}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	reg, err := meter.RegisterCallback(func(ctx context.Context, observer metric.Observer) error {
+		return nil
+	}, obc)
+	if err != nil {
+		return nil, err
+	}
+	p.cancel = func() error {
+		return reg.Unregister()
+	}
+	return p, nil
 }
 
 func (p *pool) Name() string {
@@ -128,13 +174,12 @@ func (p *pool) CtxGo(ctx context.Context, f RoutineFunc) error {
 		p.taskTail = t
 	}
 	p.taskLock.Unlock()
-	cnt := atomic.AddInt32(&p.taskCount, 1)
-	_metricQueueSize.Set(float64(cnt), p.name)
+	atomic.AddInt32(&p.taskCount, 1)
 	// The following two conditions are met:
 	// 1. the number of tasks is greater than the threshold.
 	// 2. The current number of workers is less than the upper limit p.cap.
 	// or there are currently no workers.
-	if (atomic.LoadInt32(&p.taskCount) >= p.config.ScaleThreshold && p.WorkerCount() < atomic.LoadInt32(&p.cap)) || p.WorkerCount() == 0 {
+	if (atomic.LoadInt32(&p.taskCount) >= p.config.scaleThreshold && p.WorkerCount() < atomic.LoadInt32(&p.cap)) || p.WorkerCount() == 0 {
 		p.incWorkerCount()
 		w := workerPool.Get().(*worker)
 		w.pool = p
@@ -143,18 +188,13 @@ func (p *pool) CtxGo(ctx context.Context, f RoutineFunc) error {
 	return nil
 }
 
-// SetPanicHandler the func here will be called after the panic has been recovered.
-func (p *pool) SetPanicHandler(f func(context.Context, error)) {
-	p.panicHandler = f
-}
-
 func (p *pool) WorkerCount() int32 {
 	return atomic.LoadInt32(&p.workerCount)
 }
 
 func (p *pool) Stop(ctx context.Context) error {
 	p.setStopped()
-
+	_ = p.cancel()
 	for {
 		select {
 		case <-ctx.Done():

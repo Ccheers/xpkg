@@ -5,6 +5,9 @@ import (
 	"runtime/debug"
 	"sync"
 	"sync/atomic"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 )
 
 var workerPool sync.Pool
@@ -29,8 +32,7 @@ func (w *worker) run() {
 			if w.pool.taskHead != nil {
 				t = w.pool.taskHead
 				w.pool.taskHead = w.pool.taskHead.next
-				cnt := atomic.AddInt32(&w.pool.taskCount, -1)
-				_metricQueueSize.Set(float64(cnt), w.pool.name)
+				atomic.AddInt32(&w.pool.taskCount, -1)
 			}
 			if t == nil {
 				// if there's no task to do, exit
@@ -44,8 +46,8 @@ func (w *worker) run() {
 			// check context before doing task
 			select {
 			case <-t.ctx.Done():
-				if w.pool.panicHandler != nil {
-					w.pool.panicHandler(t.ctx, fmt.Errorf("[routinepool] task cancel: %s error: %w", w.pool.name, t.ctx.Err()))
+				if w.pool.config.errorHandler != nil {
+					w.pool.config.errorHandler(t.ctx, fmt.Errorf("[routinepool] task cancel: %s error: %w", w.pool.name, t.ctx.Err()))
 				}
 				t.Recycle()
 				continue
@@ -55,13 +57,13 @@ func (w *worker) run() {
 			func() {
 				defer func() {
 					if r := recover(); r != nil {
-						if w.pool.panicHandler != nil {
-							w.pool.panicHandler(t.ctx, fmt.Errorf("[routinepool] panic in pool: %s: %v: %s", w.pool.name, r, debug.Stack()))
+						if w.pool.config.panicHandler != nil {
+							w.pool.config.panicHandler(t.ctx, fmt.Errorf("[routinepool] panic in pool: %s: %v: %s", w.pool.name, r, debug.Stack()))
 						}
 					}
 				}()
 				t.f(t.ctx)
-				_metricCount.Inc(w.pool.name)
+				w.pool.taskCounter.Add(t.ctx, 1, metric.WithAttributes(attribute.String("pool_name", w.pool.name)))
 			}()
 
 			t.Recycle()
