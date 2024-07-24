@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/ccheers/xpkg/xmsgbus"
@@ -21,7 +22,10 @@ func (x *SharedStorage) SetEx(ctx context.Context, key string, value interface{}
 }
 
 func (x *SharedStorage) Keys(ctx context.Context, prefix string) ([]string, error) {
-	return x.client.Keys(ctx, prefix+"*").Result()
+	if !strings.HasSuffix(prefix, "*") {
+		prefix += "*"
+	}
+	return x.client.Keys(ctx, prefix).Result()
 }
 
 func (x *SharedStorage) Del(ctx context.Context, key string) error {
