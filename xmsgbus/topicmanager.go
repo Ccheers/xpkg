@@ -135,7 +135,7 @@ func (x *TopicManager) check(ctx context.Context, topic string) {
 	}
 
 	for _, channel := range channels {
-		results, err := x.storage.Keys(ctx, x.subKeyPrefix(topic, channel)+"*")
+		results, err := x.storage.Keys(ctx, x.subKeyPrefix(topic, channel))
 		if err != nil {
 			_ = xlogger.DefaultLogger.Log(xlogger.LevelError,
 				"err", err,
