@@ -112,10 +112,13 @@ func (x *Subscriber[T]) Handle(ctx context.Context) (err error) {
 	// 一次 handle 监听不超过 [30,45) 秒
 	timeoutCtx, cancel := context.WithTimeout(ctx, time.Second*time.Duration(30+rand.Intn(15)))
 	defer cancel()
-	bs, err := x.msgBus.Pop(timeoutCtx, x.topic, x.channel, 0)
+
+	bs, ack, err := x.msgBus.Pop(timeoutCtx, x.topic, x.channel, 0)
 	if err != nil {
 		return err
 	}
+	defer ack()
+
 	var dst Event
 	err = json.Unmarshal(bs, &dst)
 	if err != nil {

@@ -21,7 +21,7 @@ type IMsgBus interface {
 	Push(ctx context.Context, topic string, bs []byte) error
 	// Pop 以阻塞的方式获取数据
 	// blockTimeout 为 0 则永久阻塞 直到 context 退出 或 数据到达
-	Pop(ctx context.Context, topic, channel string, blockTimeout time.Duration) ([]byte, error)
+	Pop(ctx context.Context, topic, channel string, blockTimeout time.Duration) (data []byte, ackFn func(), err error)
 	// AddChannel 为 topic 添加 channel
 	AddChannel(ctx context.Context, topic string, channel string) error
 	// RemoveChannel 删除 Channel, channel 下的数据也应该被删除
