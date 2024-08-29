@@ -15,6 +15,7 @@ require (
 	github.com/philchia/agollo/v4 v4.1.3
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
+	github.com/redis/go-redis/v9 v9.6.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/shirou/gopsutil v3.21.7+incompatible
 	github.com/stretchr/testify v1.9.0
