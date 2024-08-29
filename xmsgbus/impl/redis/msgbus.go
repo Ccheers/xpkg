@@ -43,11 +43,10 @@ func (x *MsgBus) Push(ctx context.Context, topic string, bs []byte) error {
 	var errList []error
 	for _, channel := range channels {
 		key := msgBusListKey(topic, channel)
-		err = x.client.RPush(ctx, key, bs).Err()
+		err = x.rpushAndExpire(ctx, key, string(bs), tenMinute)
 		if err != nil {
 			errList = append(errList, err)
 		}
-		x.client.Expire(ctx, key, tenMinute)
 	}
 	if len(errList) > 0 {
 		err := fmt.Errorf("publish to %s failed: %v", topic, strings.Join(arrayx.Map(errList, func(err error) string {
@@ -121,6 +120,36 @@ func (x *MsgBus) monitor(ctx context.Context) {
 		var ackData AckData
 		_ = json.Unmarshal(bs, &ackData)
 		x.client.Del(ctx, key)
-		x.client.RPush(ctx, ackData.ListKey, ackData.Data)
+		_ = x.rpushAndExpire(ctx, ackData.ListKey, ackData.Data, tenMinute)
 	}
+}
+
+const luaScript = `
+local key = KEYS[1]
+local value = ARGV[1]
+local expiration = tonumber(ARGV[2])
+
+local result = redis.call('RPUSH', key, value)
+if result > 0 then
+    redis.call('EXPIRE', key, expiration)
+    return result
+else
+    return 0  -- 表示操作失败
+end
+`
+
+var (
+	rpushAndExpireScript = redis.NewScript(luaScript)
+	ErrRPushAndExpire    = fmt.Errorf("rpushAndExpire failed")
+)
+
+func (x *MsgBus) rpushAndExpire(ctx context.Context, key string, value string, ttl time.Duration) error {
+	result, err := rpushAndExpireScript.Run(ctx, x.client, []string{key}, value, int(ttl.Seconds())).Int()
+	if err != nil {
+		return err
+	}
+	if result == 0 {
+		return ErrRPushAndExpire
+	}
+	return nil
 }

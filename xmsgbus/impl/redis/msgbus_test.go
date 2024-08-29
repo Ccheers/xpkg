@@ -45,7 +45,7 @@ func TestMsgBus_Pop(t *testing.T) {
 				ctx:          ctx,
 				topic:        "test",
 				channel:      "test2",
-				blockTimeout: 0,
+				blockTimeout: time.Second,
 			},
 			want:    msg,
 			want1:   nil,
@@ -58,24 +58,25 @@ func TestMsgBus_Pop(t *testing.T) {
 				client: tt.fields.client,
 			}
 			_ = x.AddChannel(ctx, tt.args.topic, tt.args.channel)
-			_ = x.Push(ctx, tt.args.topic, msg)
-			got, ack, err := x.Pop(tt.args.ctx, tt.args.topic, tt.args.channel, tt.args.blockTimeout)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Pop() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Pop() got = %v, want %v", got, tt.want)
-			}
-			// 如果没有 ack 则 有数据在
-
-			md5Bs := md5.Sum(msg)
-			ackKey := msgBusAckKey(time.Now(), hex.EncodeToString(md5Bs[:]))
-			bs := x.client.Get(ctx, ackKey).Val()
-			t.Logf("ack key: %s, ack value: %s", ackKey, bs)
-			ack()
-			if !errors.Is(x.client.Get(ctx, ackKey).Err(), redis.Nil) {
-				t.Errorf("ack failed, ack key: %s", ackKey)
+			for i := 0; i < 10; i++ {
+				_ = x.Push(ctx, tt.args.topic, msg)
+				got, ack, err := x.Pop(tt.args.ctx, tt.args.topic, tt.args.channel, tt.args.blockTimeout)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Pop() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("Pop() got = %v, want %v", got, tt.want)
+				}
+				// 如果没有 ack 则 有数据在
+				md5Bs := md5.Sum(msg)
+				ackKey := msgBusAckKey(time.Now(), hex.EncodeToString(md5Bs[:]))
+				bs := x.client.Get(ctx, ackKey).Val()
+				t.Logf("ack key: %s, ack value: %s", ackKey, bs)
+				ack()
+				if !errors.Is(x.client.Get(ctx, ackKey).Err(), redis.Nil) {
+					t.Errorf("ack failed, ack key: %s", ackKey)
+				}
 			}
 		})
 	}
