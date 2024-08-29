@@ -1,8 +1,6 @@
 module github.com/ccheers/xpkg
 
-go 1.21
-
-toolchain go1.21.4
+go 1.22
 
 require (
 	github.com/BurntSushi/toml v0.4.1

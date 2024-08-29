@@ -234,6 +234,7 @@ func (p *fileParser) parsePackage(path string) (*fileParser, error) {
 		srcDir:             p.srcDir,
 	}
 
+	//lint:ignore SA1019 跳过检查
 	var pkgs map[string]*ast.Package
 	if imp, err := build.Import(path, newP.srcDir, build.FindOnly); err != nil {
 		return nil, err

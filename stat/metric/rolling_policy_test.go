@@ -2,7 +2,6 @@ package metric
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 	"time"
 )
@@ -33,8 +32,6 @@ func Handler(t *testing.T, table []map[string][]int) {
 }
 
 func TestRollingPolicy_Add(t *testing.T) {
-	rand.Seed(time.Now().Unix())
-
 	// test add after 400ms and 601ms relative to the policy created time
 	policy := GetRollingPolicy()
 	time.Sleep(400 * time.Millisecond)

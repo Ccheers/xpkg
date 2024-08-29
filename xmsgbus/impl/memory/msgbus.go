@@ -35,7 +35,7 @@ func (x *MsgBus) Push(ctx context.Context, topic string, bs []byte) error {
 	return nil
 }
 
-func (x *MsgBus) Pop(ctx context.Context, topic, channel string, blockTimeout time.Duration) ([]byte, error) {
+func (x *MsgBus) Pop(ctx context.Context, topic, channel string, blockTimeout time.Duration) ([]byte, func(), error) {
 	x.mu.Lock()
 	if x.topicSet[topic] == nil {
 		x.topicSet[topic] = make(map[string]chan []byte)
@@ -48,18 +48,18 @@ func (x *MsgBus) Pop(ctx context.Context, topic, channel string, blockTimeout ti
 	if blockTimeout > 0 {
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return nil, nil, ctx.Err()
 		case <-time.After(blockTimeout):
-			return nil, xmsgbus.ErrPopTimeout
+			return nil, nil, xmsgbus.ErrPopTimeout
 		case bs := <-ch:
-			return bs, nil
+			return bs, func() {}, nil
 		}
 	}
 	select {
 	case <-ctx.Done():
-		return nil, ctx.Err()
+		return nil, nil, ctx.Err()
 	case bs := <-ch:
-		return bs, nil
+		return bs, func() {}, nil
 	}
 }
 
