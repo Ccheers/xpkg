@@ -10,34 +10,34 @@ import (
 
 // ContainsString checks if string slice contains given string.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsString = slices.Contains[string]
+var ContainsString = slices.Contains[[]string, string]
 
 // ContainsBool checks if bool slice contains given bool.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsBool = slices.Contains[bool]
+var ContainsBool = slices.Contains[[]bool, bool]
 
 // ContainsInt checks if int slice contains given int
-var ContainsInt = slices.Contains[int]
+var ContainsInt = slices.Contains[[]int, int]
 
 // ContainsInt8 checks if int8 slice contains given int8.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsInt8 = slices.Contains[int8]
+var ContainsInt8 = slices.Contains[[]int8, int8]
 
 // ContainsInt16 checks if int16 slice contains given int16.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsInt16 = slices.Contains[int16]
+var ContainsInt16 = slices.Contains[[]int16, int16]
 
 // ContainsInt32 checks if int32 slice contains given int32.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsInt32 = slices.Contains[int32]
+var ContainsInt32 = slices.Contains[[]int32, int32]
 
 // ContainsInt64 checks if int64 slice contains given int64.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsInt64 = slices.Contains[int64]
+var ContainsInt64 = slices.Contains[[]int64, int64]
 
 // ContainsUint checks if uint slice contains given uint.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsUint = slices.Contains[uint]
+var ContainsUint = slices.Contains[[]uint, uint]
 
 // ContainsUint8 checks if uint8 slice contains given uint8.
 func ContainsUint8(haystack []uint8, needle uint8) bool {
@@ -46,23 +46,23 @@ func ContainsUint8(haystack []uint8, needle uint8) bool {
 
 // ContainsUint16 checks if uint16 slice contains given uint16.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsUint16 = slices.Contains[uint16]
+var ContainsUint16 = slices.Contains[[]uint16, uint16]
 
 // ContainsUint32 checks if uint32 slice contains given uint32.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsUint32 = slices.Contains[uint32]
+var ContainsUint32 = slices.Contains[[]uint32, uint32]
 
 // ContainsUint64 checks if uint64 slice contains given uint64.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsUint64 = slices.Contains[uint64]
+var ContainsUint64 = slices.Contains[[]uint64, uint64]
 
 // ContainsFloat32 checks if float32 slice contains given float32.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsFloat32 = slices.Contains[float32]
+var ContainsFloat32 = slices.Contains[[]float32, float32]
 
 // ContainsFloat64 checks if float64 slice contains given float64.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsFloat64 = slices.Contains[float64]
+var ContainsFloat64 = slices.Contains[[]float64, float64]
 
 // ContainsByte checks if byte slice contains given byte
 func ContainsByte(haystack []byte, needle byte) bool {
@@ -81,7 +81,7 @@ func ContainsIP(haystack []net.IP, needle net.IP) bool {
 
 // ContainsUUID checks if UUID slice contains given UUID.
 // Deprecated: use golang.org/x/exp/slices.Contains instead
-var ContainsUUID = slices.Contains[uuid.UUID]
+var ContainsUUID = slices.Contains[[]uuid.UUID, uuid.UUID]
 
 // Contains checks if slice of T contains given T
 // Deprecated: use golang.org/x/exp/slices.Contains instead.
