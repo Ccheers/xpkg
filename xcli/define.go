@@ -18,6 +18,21 @@ type ICommand interface {
 	Flags() *flag.FlagSet
 }
 
+func BuildCobraCommand(icmd ICommand) *cobra.Command {
+	c := &cobra.Command{
+		Use:   icmd.Use(),
+		Short: icmd.Short(),
+		Long:  icmd.Long(),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return icmd.Run(cmd.Context(), args)
+		},
+	}
+	ConvFlag2Pflag(icmd.Flags(), c.Flags())
+	return c
+}
+
+// ============================================== flag value ==============================================
+
 type pflagValueAdapter struct {
 	value flag.Value
 }
@@ -36,27 +51,6 @@ func (x *pflagValueAdapter) Set(s string) error {
 
 func (x *pflagValueAdapter) Type() string {
 	return "string"
-}
-
-func InitRootCommand(root ICommand, cmds ...ICommand) *cobra.Command {
-	rootCmd := BuildCobraCommand(root)
-	for _, sudCmd := range cmds {
-		rootCmd.AddCommand(BuildCobraCommand(sudCmd))
-	}
-	return rootCmd
-}
-
-func BuildCobraCommand(icmd ICommand) *cobra.Command {
-	c := &cobra.Command{
-		Use:   icmd.Use(),
-		Short: icmd.Short(),
-		Long:  icmd.Long(),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return icmd.Run(cmd.Context(), args)
-		},
-	}
-	ConvFlag2Pflag(icmd.Flags(), c.Flags())
-	return c
 }
 
 func ConvFlag2Pflag(src *flag.FlagSet, dst *pflag.FlagSet) {
