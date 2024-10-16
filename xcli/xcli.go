@@ -2,6 +2,7 @@ package xcli
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,13 +16,21 @@ type XCli struct {
 }
 
 type XCliOptions struct {
-	short   string
-	long    string
-	cmdList ICommandList
+	short                string
+	long                 string
+	cmdList              ICommandList
+	handleUnknownCommand func(ctx context.Context, args []string) error
 }
 
 func defaultXCliOptions() *XCliOptions {
-	return &XCliOptions{}
+	return &XCliOptions{
+		short:   "xcli is a command line sdk",
+		long:    "xcli is a command line sdk",
+		cmdList: nil,
+		handleUnknownCommand: func(ctx context.Context, args []string) error {
+			return fmt.Errorf("unknown command: %+v", args)
+		},
+	}
 }
 
 type XCliOption interface {
@@ -49,6 +58,12 @@ func WithLong(long string) XCliOption {
 func WithCommandList(cmdList ICommandList) XCliOption {
 	return XCliOptionFunc(func(opt *XCliOptions) {
 		opt.cmdList = cmdList
+	})
+}
+
+func WithHandleUnknownCommand(handleUnknownCommand func(ctx context.Context, args []string) error) XCliOption {
+	return XCliOptionFunc(func(opt *XCliOptions) {
+		opt.handleUnknownCommand = handleUnknownCommand
 	})
 }
 
