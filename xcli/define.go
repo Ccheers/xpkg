@@ -2,8 +2,6 @@ package xcli
 
 import (
 	"context"
-	"flag"
-	"reflect"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -16,7 +14,7 @@ type ICommand interface {
 	Short() string
 	Long() string
 	Run(ctx context.Context, args []string) error
-	Flags() *flag.FlagSet
+	Flags() *pflag.FlagSet
 }
 
 func BuildCobraCommand(icmd ICommand) *cobra.Command {
@@ -34,31 +32,8 @@ func BuildCobraCommand(icmd ICommand) *cobra.Command {
 
 // ============================================== flag value ==============================================
 
-type pflagValueAdapter struct {
-	value flag.Value
-}
-
-func newPflagValueAdapter(value flag.Value) *pflagValueAdapter {
-	return &pflagValueAdapter{value: value}
-}
-
-func (x *pflagValueAdapter) String() string {
-	return x.value.String()
-}
-
-func (x *pflagValueAdapter) Set(s string) error {
-	return x.value.Set(s)
-}
-
-func (x *pflagValueAdapter) Type() string {
-	if reflect.TypeOf(x.value).Name() == "boolValue" {
-		return "bool"
-	}
-	return "string"
-}
-
-func ConvFlag2Pflag(src *flag.FlagSet, dst *pflag.FlagSet) {
-	src.VisitAll(func(f *flag.Flag) {
-		dst.Var(newPflagValueAdapter(f.Value), f.Name, f.Usage)
+func ConvFlag2Pflag(src *pflag.FlagSet, dst *pflag.FlagSet) {
+	src.VisitAll(func(f *pflag.Flag) {
+		dst.AddFlag(f)
 	})
 }
