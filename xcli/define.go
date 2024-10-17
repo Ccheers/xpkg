@@ -3,6 +3,7 @@ package xcli
 import (
 	"context"
 	"flag"
+	"reflect"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -50,6 +51,9 @@ func (x *pflagValueAdapter) Set(s string) error {
 }
 
 func (x *pflagValueAdapter) Type() string {
+	if reflect.TypeOf(x.value).Name() == "boolValue" {
+		return "bool"
+	}
 	return "string"
 }
 
