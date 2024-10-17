@@ -2,7 +2,6 @@ package xcli
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,12 +23,10 @@ type XCliOptions struct {
 
 func defaultXCliOptions() *XCliOptions {
 	return &XCliOptions{
-		short:   "xcli is a command line sdk",
-		long:    "xcli is a command line sdk",
-		cmdList: nil,
-		handleUnknownCommand: func(ctx context.Context, args []string) error {
-			return fmt.Errorf("unknown command: %+v", args)
-		},
+		short:                "xcli is a command line sdk",
+		long:                 "xcli is a command line sdk",
+		cmdList:              nil,
+		handleUnknownCommand: nil,
 	}
 }
 
@@ -78,6 +75,9 @@ func NewXCli(name string, opts ...XCliOption) *XCli {
 		Short: options.short,
 		Long:  options.long,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if options.handleUnknownCommand != nil && len(args) > 0 {
+				return options.handleUnknownCommand(cmd.Context(), args)
+			}
 			return cmd.Help()
 		},
 	}
