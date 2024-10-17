@@ -12,6 +12,10 @@ func main() {
 	err := xcli.NewXCli(
 		"xtest",
 		xcli.WithCommandList(xcli.ICommandList{NewT()}),
+		xcli.WithHandleUnknownCommand(func(ctx context.Context, args []string) error {
+			log.Println("fallback", args)
+			return nil
+		}),
 	).Run(context.Background())
 	if err != nil {
 		panic(err)

@@ -70,7 +70,7 @@ func NewXCli(name string, opts ...XCliOption) *XCli {
 		o.apply(options)
 	}
 
-	rootCmd := &cobra.Command{
+	root := &cobra.Command{
 		Use:   name,
 		Short: options.short,
 		Long:  options.long,
@@ -82,12 +82,31 @@ func NewXCli(name string, opts ...XCliOption) *XCli {
 		},
 	}
 
+	namedCmd := make(map[string]struct{}, len(options.cmdList))
 	for _, cmd := range options.cmdList {
-		rootCmd.AddCommand(BuildCobraCommand(cmd))
+		root.AddCommand(BuildCobraCommand(cmd))
+		namedCmd[cmd.Use()] = struct{}{}
+	}
+
+	// 实际注入的实例, 包装一层用于将不存在的命令兜底处理
+	cobraIns := &cobra.Command{
+		Use:   name,
+		Short: options.short,
+		Long:  options.long,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if options.handleUnknownCommand != nil && len(args) > 0 {
+				if _, ok := namedCmd[args[0]]; !ok {
+					return options.handleUnknownCommand(cmd.Context(), args)
+				}
+			}
+			return root.ExecuteContext(cmd.Context())
+		},
+		// 这个实例不需要解析 flag , 主要用于 unknown cmd 的路由分发
+		DisableFlagParsing: true,
 	}
 
 	return &XCli{
-		rootCmd: rootCmd,
+		rootCmd: cobraIns,
 	}
 }
 
