@@ -11,7 +11,9 @@ import (
 )
 
 type XCli struct {
-	rootCmd *cobra.Command
+	rootCmd  *cobra.Command
+	namedCmd map[string]struct{}
+	options  *XCliOptions
 }
 
 type XCliOptions struct {
@@ -88,25 +90,10 @@ func NewXCli(name string, opts ...XCliOption) *XCli {
 		namedCmd[cmd.Use()] = struct{}{}
 	}
 
-	// 实际注入的实例, 包装一层用于将不存在的命令兜底处理
-	cobraIns := &cobra.Command{
-		Use:   name,
-		Short: options.short,
-		Long:  options.long,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if options.handleUnknownCommand != nil && len(args) > 0 {
-				if _, ok := namedCmd[args[0]]; !ok {
-					return options.handleUnknownCommand(cmd.Context(), args)
-				}
-			}
-			return root.ExecuteContext(cmd.Context())
-		},
-		// 这个实例不需要解析 flag , 主要用于 unknown cmd 的路由分发
-		DisableFlagParsing: true,
-	}
-
 	return &XCli{
-		rootCmd: cobraIns,
+		rootCmd:  root,
+		namedCmd: namedCmd,
+		options:  options,
 	}
 }
 
@@ -115,6 +102,12 @@ func (x *XCli) Run(ctx context.Context) error {
 
 	eg := errgroup.WithCancel(ctx)
 	eg.Go(func(ctx context.Context) error {
+		args := os.Args[1:]
+		if x.options.handleUnknownCommand != nil && len(args) > 0 {
+			if _, ok := x.namedCmd[args[0]]; !ok {
+				return x.options.handleUnknownCommand(ctx, args)
+			}
+		}
 		return x.rootCmd.ExecuteContext(ctx)
 	})
 	eg.Go(func(ctx context.Context) error {
