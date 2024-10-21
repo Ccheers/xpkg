@@ -33,6 +33,9 @@ func BuildCobraCommand(icmd ICommand) *cobra.Command {
 // ============================================== flag value ==============================================
 
 func ConvFlag2Pflag(src *pflag.FlagSet, dst *pflag.FlagSet) {
+	if src == nil {
+		return
+	}
 	src.VisitAll(func(f *pflag.Flag) {
 		dst.AddFlag(f)
 	})
