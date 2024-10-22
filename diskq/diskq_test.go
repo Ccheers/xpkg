@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -81,10 +80,7 @@ func TestDiskQueue(t *testing.T) {
 	l := NewTestLogger(t)
 
 	dqName := "test_disk_queue" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	dq := newDiskq(dqName, tmpDir, 1024, 4, 1<<10, 2500, 2*time.Second, l)
 	defer dq.Close()
@@ -92,7 +88,7 @@ func TestDiskQueue(t *testing.T) {
 	Equal(t, int64(0), dq.Depth())
 
 	msg := []byte("test")
-	err = dq.Put(msg)
+	err := dq.Put(msg)
 	Nil(t, err)
 	Equal(t, int64(1), dq.Depth())
 
@@ -103,10 +99,7 @@ func TestDiskQueue(t *testing.T) {
 func TestDiskQueueRoll(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_roll" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	msg := []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 0}
 	ml := int64(len(msg))
@@ -133,10 +126,7 @@ func TestDiskQueueRoll(t *testing.T) {
 func TestDiskQueuePeek(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_peek" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	msg := bytes.Repeat([]byte{0}, 10)
 	ml := int64(len(msg))
@@ -216,10 +206,7 @@ func assertFileNotExist(t *testing.T, fn string) {
 func TestDiskQueueEmpty(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_empty" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	msg := bytes.Repeat([]byte{0}, 10)
 	dq := newDiskq(dqName, tmpDir, 100, 0, 1<<10, 2500, 2*time.Second, l)
@@ -284,10 +271,7 @@ func TestDiskQueueEmpty(t *testing.T) {
 func TestDiskQueueCorruption(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_corruption" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	// require a non-zero message length for the corrupt (len 0) test below
 	dq := newDiskq(dqName, tmpDir, 1000, 10, 1<<10, 5, 2*time.Second, l)
@@ -383,10 +367,7 @@ func readMetaDataFile(fileName string, retried int) md {
 func TestDiskQueueSyncAfterRead(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_read_after_sync" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	dq := newDiskq(dqName, tmpDir, 1<<11, 0, 1<<10, 2500, 50*time.Millisecond, l)
 	defer dq.Close()
@@ -434,10 +415,7 @@ func TestDiskQueueTorture(t *testing.T) {
 
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_torture" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	dq := newDiskq(dqName, tmpDir, 262144, 0, 1<<10, 2500, 2*time.Second, l)
 	NotNil(t, dq)
@@ -521,10 +499,7 @@ func TestDiskQueueTorture(t *testing.T) {
 func TestDiskQueueResize(t *testing.T) {
 	l := NewTestLogger(t)
 	dqName := "test_disk_queue_resize" + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	msg := []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	ml := int64(len(msg))
@@ -604,10 +579,7 @@ func benchmarkDiskQueuePut(size int64, b *testing.B) {
 	b.StopTimer()
 	l := NewTestLogger(b)
 	dqName := "bench_disk_queue_put" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	dq := newDiskq(dqName, tmpDir, 1024768*100, 0, 1<<20, 2500, 2*time.Second, l)
 	defer dq.Close()
@@ -653,10 +625,7 @@ func BenchmarkDiskWrite1048576(b *testing.B) {
 func benchmarkDiskWrite(size int64, b *testing.B) {
 	b.StopTimer()
 	fileName := "bench_disk_queue_put" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0600)
 	b.SetBytes(size)
@@ -699,10 +668,7 @@ func BenchmarkDiskWriteBuffered1048576(b *testing.B) {
 func benchmarkDiskWriteBuffered(size int64, b *testing.B) {
 	b.StopTimer()
 	fileName := "bench_disk_queue_put" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0600)
 	b.SetBytes(size)
@@ -755,10 +721,7 @@ func benchmarkDiskQueueGet(size int64, b *testing.B) {
 	b.StopTimer()
 	l := NewTestLogger(b)
 	dqName := "bench_disk_queue_get" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
-	tmpDir, err := ioutil.TempDir("", fmt.Sprintf("nsq-test-%d", time.Now().UnixNano()))
-	if err != nil {
-		panic(err)
-	}
+	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
 	dq := newDiskq(dqName, tmpDir, 1024768, 0, 1<<30, 2500, 2*time.Second, l)
 	defer dq.Close()
