@@ -11,6 +11,7 @@ import (
 type ILRUCache interface {
 	Set(ctx context.Context, key string, value interface{}, expireAt time.Time)
 	Get(ctx context.Context, key string) (interface{}, bool)
+	Del(ctx context.Context, key string)
 }
 
 type T struct {
@@ -27,6 +28,14 @@ func NewLRUCache(maxLen int) ILRUCache {
 		latestGCAt: time.Unix(0, 0),
 		mm:         make(map[string]time.Time, maxLen),
 	}
+}
+
+func (x *T) Del(ctx context.Context, key string) {
+	x.mu.Lock()
+	defer x.mu.Unlock()
+
+	delete(x.mm, key)
+	x.arcCache.Remove(key)
 }
 
 func (x *T) Set(ctx context.Context, key string, value interface{}, expireAt time.Time) {

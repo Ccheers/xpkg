@@ -26,6 +26,15 @@ func TestNewLRUCache(t *testing.T) {
 	if len(cache.(*T).mm) > 0 {
 		t.Fatal("should be empty")
 	}
+
+	cache.Set(ctx, "1", 1, time.Now().Add(time.Minute))
+	time.Sleep(time.Second * 10)
+	cache.Set(ctx, "1", 1, time.Now().Add(-time.Second))
+	_, ok = cache.Get(ctx, "1")
+	if ok {
+		t.Fatal("should not be ok")
+	}
+
 }
 
 func BenchmarkLRUCache(b *testing.B) {
