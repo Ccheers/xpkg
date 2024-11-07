@@ -16,7 +16,7 @@ import (
 // Oss 抽象接口
 type Oss interface {
 	Set(ctx context.Context, bucket string, key string, reader io.Reader) (err error)
-	Get(ctx context.Context, bucket string, key string) (resp []byte, err error)
+	Get(ctx context.Context, bucket string, key string) (reader io.ReadCloser, err error)
 }
 
 // Type Oss 类型

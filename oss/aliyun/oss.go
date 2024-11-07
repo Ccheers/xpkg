@@ -24,7 +24,7 @@ func (o *Oss) Set(ctx context.Context, bucket string, key string, reader io.Read
 	return
 }
 
-func (o *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, err error) {
+func (o *Oss) Get(ctx context.Context, bucket string, key string) (reader io.ReadCloser, err error) {
 	bkt, err := o.client.Bucket(bucket)
 	if err != nil {
 		return
@@ -33,8 +33,6 @@ func (o *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, 
 	if err != nil {
 		return
 	}
-	defer body.Close()
 
-	resp, err = io.ReadAll(body)
-	return
+	return body, nil
 }

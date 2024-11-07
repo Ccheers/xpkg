@@ -83,9 +83,11 @@ func (x *MsgBus) RemoveChannel(ctx context.Context, topic string, channel string
 	if x.topicSet[topic] == nil {
 		return nil
 	}
-	if x.topicSet[topic][channel] == nil {
+	ch := x.topicSet[topic][channel]
+	if ch == nil {
 		return nil
 	}
+	x.drainChain(ch)
 	delete(x.topicSet[topic], channel)
 	return nil
 }
@@ -102,4 +104,10 @@ func (x *MsgBus) ListChannel(ctx context.Context, topic string) ([]string, error
 		channels = append(channels, c)
 	}
 	return channels, nil
+}
+
+func (x *MsgBus) drainChain(ch chan []byte) {
+	close(ch)
+	for range ch {
+	}
 }
