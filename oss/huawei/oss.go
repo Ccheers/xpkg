@@ -25,7 +25,7 @@ func (h *Oss) Set(ctx context.Context, bucket string, key string, reader io.Read
 	return
 }
 
-func (h *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, err error) {
+func (h *Oss) Get(ctx context.Context, bucket string, key string) (reader io.ReadCloser, err error) {
 	input := &obs.GetObjectInput{}
 	input.Bucket = bucket
 	input.Key = key
@@ -33,9 +33,6 @@ func (h *Oss) Get(ctx context.Context, bucket string, key string) (resp []byte, 
 	if err != nil {
 		return
 	}
-	defer output.Body.Close()
 
-	// 读取对象内容
-	resp, err = io.ReadAll(output.Body)
-	return
+	return output.Body, nil
 }
