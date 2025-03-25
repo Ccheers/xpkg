@@ -2,6 +2,8 @@ package xtrace
 
 import (
 	"context"
+	"fmt"
+	"runtime/debug"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
@@ -13,29 +15,7 @@ import (
 // 基于otel规范实现一个 call 函数，用于注入任意函数实现链路追踪
 // 使用这个函数的 trace 一定会被记录, 请自行判断是否调用, 或则使用 CallWithSampler
 func Call[T any](ctx context.Context, spanName string, f func(ctx context.Context) (T, error)) (T, error) {
-	// 基于otel规范实现一个 call 函数，用于注入任意函数实现链路追踪
-	tr := otel.Tracer("xpkg.trace")
-	psc := trace.SpanContextFromContext(ctx)
-	if !psc.IsValid() {
-		tid, sid := idGenerator.NewIDs(ctx)
-		ctx = trace.ContextWithSpanContext(ctx, trace.NewSpanContext(trace.SpanContextConfig{
-			TraceID:    tid,
-			SpanID:     sid,
-			TraceFlags: trace.FlagsSampled,
-		}))
-	}
-	ctx, span := tr.Start(ctx, spanName,
-		trace.WithSpanKind(trace.SpanKindInternal),
-	)
-	defer span.End()
-	reply, err := f(ctx)
-	if err != nil {
-		span.RecordError(err)
-		span.SetStatus(codes.Error, err.Error())
-	} else {
-		span.SetStatus(codes.Ok, "OK")
-	}
-	return reply, err
+	return CallWithSampler(ctx, spanName, sdktrace.AlwaysSample(), f)
 }
 
 // CallWithSampler
@@ -64,6 +44,14 @@ func CallWithSampler[T any](ctx context.Context, spanName string, sampler sdktra
 		trace.WithSpanKind(trace.SpanKindInternal),
 	)
 	defer span.End()
+	defer func() {
+		r := recover()
+		if r != nil {
+			err := fmt.Errorf("panic: %v, stack: %s", r, debug.Stack())
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+	}()
 	reply, err := f(ctx)
 	if err != nil {
 		span.RecordError(err)
