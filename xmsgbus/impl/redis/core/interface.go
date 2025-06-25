@@ -6,9 +6,7 @@ import (
 	"time"
 )
 
-var (
-	ErrRPushAndExpire = fmt.Errorf("RPushAndExpire failed")
-)
+var ErrRPushAndExpire = fmt.Errorf("RPushAndExpire failed")
 
 type IRedisClient interface {
 	SAdd(ctx context.Context, key string, members ...interface{}) error

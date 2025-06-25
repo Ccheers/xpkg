@@ -149,7 +149,6 @@ func TestMetrics(t *testing.T) {
 		})
 	}
 	wg.Wait()
-
 }
 
 func newMeterProvider() (metric.MeterProvider, error) {

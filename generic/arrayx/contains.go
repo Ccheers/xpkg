@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net"
 
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/exp/slices"
 )
 

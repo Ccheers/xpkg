@@ -6,9 +6,7 @@ import (
 	"github.com/ccheers/xpkg/lru/v2/internal"
 )
 
-var (
-	ErrMustProvidePositiveSize = errors.New("must provide a positive size")
-)
+var ErrMustProvidePositiveSize = errors.New("must provide a positive size")
 
 // LRUCache is the interface for simple LRU cache.
 type LRUCache[K comparable, V any] interface {

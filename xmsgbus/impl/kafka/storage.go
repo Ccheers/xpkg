@@ -45,7 +45,7 @@ func NewStorage(brokers []string, options ...IMsgBusOption) (xmsgbus.ISharedStor
 
 func (s *Storage) SetEx(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
 	topicName := "xmsgbus_storage"
-	
+
 	if err := s.ensureTopicExists(topicName); err != nil {
 		return fmt.Errorf("failed to ensure topic exists: %w", err)
 	}
@@ -88,11 +88,11 @@ func (s *Storage) SetEx(ctx context.Context, key string, value interface{}, ttl 
 
 func (s *Storage) Keys(ctx context.Context, prefix string) ([]string, error) {
 	topicName := "xmsgbus_storage"
-	
+
 	if err := s.ensureTopicExists(topicName); err != nil {
 		return nil, fmt.Errorf("failed to ensure topic exists: %w", err)
 	}
-	
+
 	consumer, err := sarama.NewConsumer(s.brokers, s.config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create consumer: %w", err)
@@ -114,7 +114,7 @@ func (s *Storage) Keys(ctx context.Context, prefix string) ([]string, error) {
 		}
 
 		timeout := time.After(5 * time.Second)
-		
+
 	consumeLoop:
 		for {
 			select {
@@ -156,7 +156,7 @@ func (s *Storage) Keys(ctx context.Context, prefix string) ([]string, error) {
 
 func (s *Storage) Del(ctx context.Context, key string) error {
 	topicName := "xmsgbus_storage"
-	
+
 	if err := s.ensureTopicExists(topicName); err != nil {
 		return fmt.Errorf("failed to ensure topic exists: %w", err)
 	}
@@ -174,7 +174,6 @@ func (s *Storage) Del(ctx context.Context, key string) error {
 
 	return nil
 }
-
 
 func (s *Storage) ensureTopicExists(topicName string) error {
 	topics, err := s.admin.ListTopics()

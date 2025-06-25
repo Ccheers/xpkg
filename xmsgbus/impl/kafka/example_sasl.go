@@ -27,7 +27,7 @@ func ExampleUsage() {
 		ServerName:         "kafka.example.com",
 		InsecureSkipVerify: false,
 	}
-	
+
 	msgBus2, err := NewMsgBus(
 		WithBrokers([]string{"kafka.example.com:9093"}),
 		WithSASLSCRAMSHA256Auth("username", "password"),

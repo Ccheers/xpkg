@@ -214,7 +214,8 @@ func New(opts ...Option) Interface {
 // from the filesystem and starting the read ahead goroutine
 func newDiskq(name string, dataDIR string, maxBytesPerFile int64,
 	minMsgSize int32, maxMsgSize int32,
-	syncEvery int64, syncTimeout time.Duration, logf AppLogFunc) Interface {
+	syncEvery int64, syncTimeout time.Duration, logf AppLogFunc,
+) Interface {
 	d := &DiskQueue{
 		name:            name,
 		dataDIR:         dataDIR,
@@ -391,7 +392,7 @@ func (d *DiskQueue) readOne() ([]byte, error) {
 
 	if d.readFile == nil {
 		curFileName := d.fileName(d.readFileNum)
-		d.readFile, err = os.OpenFile(curFileName, os.O_RDONLY, 0600)
+		d.readFile, err = os.OpenFile(curFileName, os.O_RDONLY, 0o600)
 		if err != nil {
 			return nil, err
 		}
@@ -500,7 +501,7 @@ func (d *DiskQueue) writeOne(data []byte) error {
 	}
 	if d.writeFile == nil {
 		curFileName := d.fileName(d.writeFileNum)
-		d.writeFile, err = os.OpenFile(curFileName, os.O_RDWR|os.O_CREATE, 0600)
+		d.writeFile, err = os.OpenFile(curFileName, os.O_RDWR|os.O_CREATE, 0o600)
 		if err != nil {
 			return err
 		}
@@ -568,7 +569,7 @@ func (d *DiskQueue) retrieveMetaData() error {
 	var err error
 
 	fileName := d.metaDataFileName()
-	f, err = os.OpenFile(fileName, os.O_RDONLY, 0600)
+	f, err = os.OpenFile(fileName, os.O_RDONLY, 0o600)
 	if err != nil {
 		return err
 	}
@@ -621,7 +622,7 @@ func (d *DiskQueue) persistMetaData() error {
 	tmpFileName := fmt.Sprintf("%s.%d.tmp", fileName, rand.Int())
 
 	// write to tmp file
-	f, err = os.OpenFile(tmpFileName, os.O_RDWR|os.O_CREATE, 0600)
+	f, err = os.OpenFile(tmpFileName, os.O_RDWR|os.O_CREATE, 0o600)
 	if err != nil {
 		return err
 	}

@@ -74,9 +74,7 @@ else
 end
 `
 
-var (
-	rpushAndExpireScript = redis.NewScript(luaScript)
-)
+var rpushAndExpireScript = redis.NewScript(luaScript)
 
 func (x *RedisClientImplV8) rpushAndExpire(ctx context.Context, key string, value string, ttl time.Duration) error {
 	result, err := rpushAndExpireScript.Run(ctx, x.client, []string{key}, value, int(ttl.Seconds())).Int()

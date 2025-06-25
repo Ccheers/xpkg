@@ -34,7 +34,6 @@ func TestNewLRUCache(t *testing.T) {
 	if ok {
 		t.Fatal("should not be ok")
 	}
-
 }
 
 func BenchmarkLRUCache(b *testing.B) {

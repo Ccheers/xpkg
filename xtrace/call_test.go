@@ -84,5 +84,4 @@ func TestCallWithSampler(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
 }

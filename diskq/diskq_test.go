@@ -194,11 +194,10 @@ func TestDiskQueuePeek(t *testing.T) {
 
 		Nil(t, dq.Empty())
 	})
-
 }
 
 func assertFileNotExist(t *testing.T, fn string) {
-	f, err := os.OpenFile(fn, os.O_RDONLY, 0600)
+	f, err := os.OpenFile(fn, os.O_RDONLY, 0o600)
 	Equal(t, (*os.File)(nil), f)
 	Equal(t, true, os.IsNotExist(err))
 }
@@ -340,7 +339,7 @@ type md struct {
 }
 
 func readMetaDataFile(fileName string, retried int) md {
-	f, err := os.OpenFile(fileName, os.O_RDONLY, 0600)
+	f, err := os.OpenFile(fileName, os.O_RDONLY, 0o600)
 	if err != nil {
 		// provide a simple retry that results in up to
 		// another 500ms for the file to be written.
@@ -551,30 +550,39 @@ func TestDiskQueueResize(t *testing.T) {
 func BenchmarkDiskQueuePut16(b *testing.B) {
 	benchmarkDiskQueuePut(16, b)
 }
+
 func BenchmarkDiskQueuePut64(b *testing.B) {
 	benchmarkDiskQueuePut(64, b)
 }
+
 func BenchmarkDiskQueuePut256(b *testing.B) {
 	benchmarkDiskQueuePut(256, b)
 }
+
 func BenchmarkDiskQueuePut1024(b *testing.B) {
 	benchmarkDiskQueuePut(1024, b)
 }
+
 func BenchmarkDiskQueuePut4096(b *testing.B) {
 	benchmarkDiskQueuePut(4096, b)
 }
+
 func BenchmarkDiskQueuePut16384(b *testing.B) {
 	benchmarkDiskQueuePut(16384, b)
 }
+
 func BenchmarkDiskQueuePut65536(b *testing.B) {
 	benchmarkDiskQueuePut(65536, b)
 }
+
 func BenchmarkDiskQueuePut262144(b *testing.B) {
 	benchmarkDiskQueuePut(262144, b)
 }
+
 func BenchmarkDiskQueuePut1048576(b *testing.B) {
 	benchmarkDiskQueuePut(1048576, b)
 }
+
 func benchmarkDiskQueuePut(size int64, b *testing.B) {
 	b.StopTimer()
 	l := NewTestLogger(b)
@@ -598,36 +606,45 @@ func benchmarkDiskQueuePut(size int64, b *testing.B) {
 func BenchmarkDiskWrite16(b *testing.B) {
 	benchmarkDiskWrite(16, b)
 }
+
 func BenchmarkDiskWrite64(b *testing.B) {
 	benchmarkDiskWrite(64, b)
 }
+
 func BenchmarkDiskWrite256(b *testing.B) {
 	benchmarkDiskWrite(256, b)
 }
+
 func BenchmarkDiskWrite1024(b *testing.B) {
 	benchmarkDiskWrite(1024, b)
 }
+
 func BenchmarkDiskWrite4096(b *testing.B) {
 	benchmarkDiskWrite(4096, b)
 }
+
 func BenchmarkDiskWrite16384(b *testing.B) {
 	benchmarkDiskWrite(16384, b)
 }
+
 func BenchmarkDiskWrite65536(b *testing.B) {
 	benchmarkDiskWrite(65536, b)
 }
+
 func BenchmarkDiskWrite262144(b *testing.B) {
 	benchmarkDiskWrite(262144, b)
 }
+
 func BenchmarkDiskWrite1048576(b *testing.B) {
 	benchmarkDiskWrite(1048576, b)
 }
+
 func benchmarkDiskWrite(size int64, b *testing.B) {
 	b.StopTimer()
 	fileName := "bench_disk_queue_put" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
 	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
-	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0600)
+	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0o600)
 	b.SetBytes(size)
 	data := make([]byte, size)
 	b.StartTimer()
@@ -641,36 +658,45 @@ func benchmarkDiskWrite(size int64, b *testing.B) {
 func BenchmarkDiskWriteBuffered16(b *testing.B) {
 	benchmarkDiskWriteBuffered(16, b)
 }
+
 func BenchmarkDiskWriteBuffered64(b *testing.B) {
 	benchmarkDiskWriteBuffered(64, b)
 }
+
 func BenchmarkDiskWriteBuffered256(b *testing.B) {
 	benchmarkDiskWriteBuffered(256, b)
 }
+
 func BenchmarkDiskWriteBuffered1024(b *testing.B) {
 	benchmarkDiskWriteBuffered(1024, b)
 }
+
 func BenchmarkDiskWriteBuffered4096(b *testing.B) {
 	benchmarkDiskWriteBuffered(4096, b)
 }
+
 func BenchmarkDiskWriteBuffered16384(b *testing.B) {
 	benchmarkDiskWriteBuffered(16384, b)
 }
+
 func BenchmarkDiskWriteBuffered65536(b *testing.B) {
 	benchmarkDiskWriteBuffered(65536, b)
 }
+
 func BenchmarkDiskWriteBuffered262144(b *testing.B) {
 	benchmarkDiskWriteBuffered(262144, b)
 }
+
 func BenchmarkDiskWriteBuffered1048576(b *testing.B) {
 	benchmarkDiskWriteBuffered(1048576, b)
 }
+
 func benchmarkDiskWriteBuffered(size int64, b *testing.B) {
 	b.StopTimer()
 	fileName := "bench_disk_queue_put" + strconv.Itoa(b.N) + strconv.Itoa(int(time.Now().Unix()))
 	tmpDir := os.TempDir()
 	defer os.RemoveAll(tmpDir)
-	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0600)
+	f, _ := os.OpenFile(path.Join(tmpDir, fileName), os.O_RDWR|os.O_CREATE, 0o600)
 	b.SetBytes(size)
 	data := make([]byte, size)
 	w := bufio.NewWriterSize(f, 1024*4)
@@ -692,27 +718,35 @@ func benchmarkDiskWriteBuffered(size int64, b *testing.B) {
 func BenchmarkDiskQueueGet16(b *testing.B) {
 	benchmarkDiskQueueGet(16, b)
 }
+
 func BenchmarkDiskQueueGet64(b *testing.B) {
 	benchmarkDiskQueueGet(64, b)
 }
+
 func BenchmarkDiskQueueGet256(b *testing.B) {
 	benchmarkDiskQueueGet(256, b)
 }
+
 func BenchmarkDiskQueueGet1024(b *testing.B) {
 	benchmarkDiskQueueGet(1024, b)
 }
+
 func BenchmarkDiskQueueGet4096(b *testing.B) {
 	benchmarkDiskQueueGet(4096, b)
 }
+
 func BenchmarkDiskQueueGet16384(b *testing.B) {
 	benchmarkDiskQueueGet(16384, b)
 }
+
 func BenchmarkDiskQueueGet65536(b *testing.B) {
 	benchmarkDiskQueueGet(65536, b)
 }
+
 func BenchmarkDiskQueueGet262144(b *testing.B) {
 	benchmarkDiskQueueGet(262144, b)
 }
+
 func BenchmarkDiskQueueGet1048576(b *testing.B) {
 	benchmarkDiskQueueGet(1048576, b)
 }
