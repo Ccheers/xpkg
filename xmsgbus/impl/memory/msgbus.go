@@ -9,9 +9,7 @@ import (
 	"github.com/ccheers/xpkg/xmsgbus"
 )
 
-var (
-	ErrChanIsFull = fmt.Errorf("channel is full")
-)
+var ErrChanIsFull = fmt.Errorf("channel is full")
 
 type msgBusOptions struct {
 	maxBuffer int
