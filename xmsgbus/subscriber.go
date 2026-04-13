@@ -113,6 +113,10 @@ func (x *Subscriber[T]) Handle(ctx context.Context) (err error) {
 	blockTimeout := time.Second * time.Duration(30+rand.Intn(15))
 	bs, ack, err := x.msgBus.Pop(ctx, x.topic, x.channel, blockTimeout)
 	if err != nil {
+		// 超时没有数据则直接返回，等待下一次调用
+		if err.Error() == "redis: nil" {
+			return nil
+		}
 		return err
 	}
 	defer ack()
