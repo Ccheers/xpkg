@@ -111,7 +111,7 @@ func (x *Subscriber[T]) Handle(ctx context.Context) (err error) {
 	}
 	// 一次 handle 监听不超过 [30,45) 秒
 	blockTimeout := time.Second * time.Duration(30+rand.Intn(15))
-	bs, ack, err := x.msgBus.Pop(timeoutCtx, x.topic, x.channel, blockTimeout)
+	bs, ack, err := x.msgBus.Pop(ctx, x.topic, x.channel, blockTimeout)
 	if err != nil {
 		return err
 	}
