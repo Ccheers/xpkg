@@ -243,6 +243,10 @@ func newDiskq(name string, dataDIR string, maxBytesPerFile int64,
 		d.logf(ERROR, "DISKQUEUE(%s) failed to retrieveMetaData - %s", d.name, err)
 	}
 
+	// clean up stale temp and bad files left by previous crashed instances
+	d.cleanupTempFiles()
+	d.cleanupBadFiles()
+
 	go d.ioLoop()
 	return d
 }
@@ -348,7 +352,44 @@ func (d *DiskQueue) deleteAllFiles() error {
 		return innerErr
 	}
 
+	d.cleanupTempFiles()
+	d.cleanupBadFiles()
+
 	return err
+}
+
+// cleanupTempFiles removes stale .tmp metadata files left by crashed processes
+func (d *DiskQueue) cleanupTempFiles() {
+	pattern := fmt.Sprintf(path.Join(d.dataDIR, "%s.diskqueue.meta.dat.*.tmp"), d.name)
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		d.logf(WARN, "DISKQUEUE(%s) failed to glob temp files - %s", d.name, err)
+		return
+	}
+	for _, fn := range matches {
+		if err = os.Remove(fn); err != nil && !os.IsNotExist(err) {
+			d.logf(WARN, "DISKQUEUE(%s) failed to remove temp file %s - %s", d.name, fn, err)
+		} else {
+			d.logf(INFO, "DISKQUEUE(%s) removed stale temp file %s", d.name, fn)
+		}
+	}
+}
+
+// cleanupBadFiles removes .bad files that were created when corrupt data files were encountered
+func (d *DiskQueue) cleanupBadFiles() {
+	pattern := fmt.Sprintf(path.Join(d.dataDIR, "%s.diskqueue.*.dat.bad"), d.name)
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		d.logf(WARN, "DISKQUEUE(%s) failed to glob bad files - %s", d.name, err)
+		return
+	}
+	for _, fn := range matches {
+		if err = os.Remove(fn); err != nil && !os.IsNotExist(err) {
+			d.logf(WARN, "DISKQUEUE(%s) failed to remove bad file %s - %s", d.name, fn, err)
+		} else {
+			d.logf(INFO, "DISKQUEUE(%s) removed bad file %s", d.name, fn)
+		}
+	}
 }
 
 func (d *DiskQueue) skipToNextRWFile() error {
