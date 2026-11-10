@@ -3,6 +3,7 @@ package xmsgbus
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"runtime/debug"
@@ -114,7 +115,7 @@ func (x *Subscriber[T]) Handle(ctx context.Context) (err error) {
 	bs, ack, err := x.msgBus.Pop(ctx, x.topic, x.channel, blockTimeout)
 	if err != nil {
 		// 超时没有数据则直接返回，等待下一次调用
-		if err.Error() == "redis: nil" {
+		if errors.Is(err, ErrPopTimeout) || errors.Is(err, ErrNoData) || err.Error() == "redis: nil" {
 			return nil
 		}
 		return err

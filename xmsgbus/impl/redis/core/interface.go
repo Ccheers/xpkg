@@ -9,6 +9,7 @@ import (
 var ErrRPushAndExpire = fmt.Errorf("RPushAndExpire failed")
 
 type IRedisClient interface {
+	Eval(ctx context.Context, script string, keys []string, args ...interface{}) (interface{}, error)
 	SAdd(ctx context.Context, key string, members ...interface{}) error
 	SMembers(ctx context.Context, key string) ([]string, error)
 	SRem(ctx context.Context, key string, members ...interface{}) error

@@ -1,38 +1,24 @@
 package core
 
-import (
-	"fmt"
-	"time"
-)
-
-// msgBusSetKey 集合 key
-func msgBusSetKey(topic string) string {
-	return "hmsgbus:set:v3:" + topic
-}
-
-// 队列key
-func msgBusListKey(topic string, channel string) string {
-	return "hmsgbus:list:v3:" + topic + ":" + channel
-}
-
-// Ack key
-func msgBusAckKeyPrefix(tm time.Time) string {
-	const (
-		format = "2006-01-02-15-04"
-	)
-	return fmt.Sprintf("hmsgbus:hash:v3:ack:%s:", tm.Format(format))
-}
-
-// Ack key
-func msgBusAckKey(tm time.Time, key string) string {
-	return msgBusAckKeyPrefix(tm) + key
-}
-
-// Ack key
-func msgBusMonitorKey() string {
-	return "hmsgbus:nx:v3:monitor"
-}
+import "encoding/base64"
 
 const (
-	tenMinute = time.Minute * 10
+	pendingDataKey = "hmsgbus:v4:pending:data"
+	pendingDueKey  = "hmsgbus:v4:pending:due"
 )
+
+type channelKeys struct {
+	catalog string
+	leases  string
+	ready   string
+}
+
+func catalogKey(topic string) string {
+	return "hmsgbus:v4:channels:" + base64.RawURLEncoding.EncodeToString([]byte(topic))
+}
+
+func channelKeysFor(topic, channel string) channelKeys {
+	prefix := "hmsgbus:v4:channel:" + base64.RawURLEncoding.EncodeToString([]byte(topic)) +
+		":" + base64.RawURLEncoding.EncodeToString([]byte(channel))
+	return channelKeys{catalog: catalogKey(topic), leases: prefix + ":leases", ready: prefix + ":ready"}
+}

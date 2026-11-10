@@ -12,8 +12,7 @@ import (
 
 func TestExample(t *testing.T) {
 	msgbus := memory.NewMsgBus()
-	storage := memory.NewStorage()
-	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus, newSimpleCas(), storage)
+	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus)
 	publisher := xmsgbus.NewPublisher[*dummyEvent](
 		msgbus,
 		manager,

@@ -30,6 +30,13 @@ type IMsgBus interface {
 	ListChannel(ctx context.Context, topic string) ([]string, error)
 }
 
+// SubscriptionRegistry 的实现负责订阅租约与队列路由的原子变更。
+type SubscriptionRegistry interface {
+	RegisterSubscription(ctx context.Context, topic, channel, subscriber string, ttl time.Duration) error
+	UnregisterSubscription(ctx context.Context, topic, channel, subscriber string) error
+	SweepSubscriptions(ctx context.Context, topic string) (bool, error)
+}
+
 type ISharedStorage interface {
 	// SetEx 设置一个 值 ，并且设置它的过期时间
 	SetEx(ctx context.Context, key string, value interface{}, ttl time.Duration) error
