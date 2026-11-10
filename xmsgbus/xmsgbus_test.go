@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"reflect"
-	"sync"
 	"testing"
 	"time"
 
@@ -19,28 +18,6 @@ type dummyEvent struct {
 
 func (x *dummyEvent) Topic() string {
 	return "test"
-}
-
-type simpleCas struct {
-	mu sync.Mutex
-	mm map[string]string
-}
-
-func newSimpleCas() *simpleCas {
-	return &simpleCas{
-		mu: sync.Mutex{},
-		mm: make(map[string]string),
-	}
-}
-
-func (x *simpleCas) CAS(key, src, dst string) bool {
-	x.mu.Lock()
-	defer x.mu.Unlock()
-	if x.mm[key] == src {
-		x.mm[key] = dst
-		return true
-	}
-	return false
 }
 
 func TestDefaultDecodeFunc(t *testing.T) {
@@ -293,8 +270,7 @@ func TestPublisher_Publish(t *testing.T) {
 		wantErr bool
 	}
 	msgbus := memory.NewMsgBus()
-	storage := memory.NewStorage()
-	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus, newSimpleCas(), storage)
+	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus)
 	tests := []testCase[*dummyEvent]{
 		{
 			name: "1",
@@ -331,8 +307,7 @@ func TestSubscriber_Close(t *testing.T) {
 		args args
 	}
 	msgbus := memory.NewMsgBus()
-	storage := memory.NewStorage()
-	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus, newSimpleCas(), storage)
+	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus)
 	tests := []testCase[*dummyEvent]{
 		{
 			name: "1",
@@ -366,8 +341,7 @@ func TestSubscriber_Handle(t *testing.T) {
 		wantErr bool
 	}
 	msgbus := memory.NewMsgBus()
-	storage := memory.NewStorage()
-	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus, newSimpleCas(), storage)
+	manager := xmsgbus.NewTopicManager(context.TODO(), msgbus)
 	go func() {
 		time.Sleep(time.Second)
 		err := xmsgbus.NewPublisher[*dummyEvent](

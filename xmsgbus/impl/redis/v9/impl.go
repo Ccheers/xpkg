@@ -16,6 +16,10 @@ func NewRedisClientImplV9(client *redis.Client) core.IRedisClient {
 	return &RedisClientImplV9{client: client}
 }
 
+func (x *RedisClientImplV9) Eval(ctx context.Context, script string, keys []string, args ...interface{}) (interface{}, error) {
+	return x.client.Eval(ctx, script, keys, args...).Result()
+}
+
 func (x *RedisClientImplV9) SAdd(ctx context.Context, key string, members ...interface{}) error {
 	return x.client.SAdd(ctx, key, members...).Err()
 }
